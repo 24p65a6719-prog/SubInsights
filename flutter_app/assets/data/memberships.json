@@ -1,0 +1,25 @@
+{
+  "memberships": [
+    {
+      "id": "mem_ieee_001",
+      "name": "IEEE Professional Membership",
+      "category": "professional",
+      "description": "Institute of Electrical and Electronics Engineers",
+      "associated_benefits": ["ben_hotel_discount", "ben_travel_incentive"]
+    },
+    {
+      "id": "mem_iei_001",
+      "name": "IEI Membership",
+      "category": "professional",
+      "description": "Institution of Engineers India",
+      "associated_benefits": ["ben_hotel_discount", "ben_conference_discount"]
+    },
+    {
+      "id": "mem_ndl_001",
+      "name": "National Digital Library Membership",
+      "category": "academic",
+      "description": "National Digital Library of India",
+      "associated_benefits": ["ben_resource_access", "ben_journal_discount"]
+    }
+  ]
+}

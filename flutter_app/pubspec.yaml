@@ -1,0 +1,31 @@
+name: subinsights
+description: "SubInsights - Location-Aware Membership Benefit Discovery Platform"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.10.7
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.2
+  http: ^1.2.2
+  geolocator: ^13.0.2
+  google_maps_flutter: ^2.10.1
+  shared_preferences: ^2.3.4
+  intl: ^0.20.2
+  flutter_local_notifications: ^18.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/data/
+
