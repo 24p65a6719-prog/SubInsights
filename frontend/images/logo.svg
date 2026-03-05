@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4285F4;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00E676;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Magnifying glass circle -->
+  <circle cx="42" cy="42" r="28" stroke="url(#grad)" stroke-width="7" fill="none" stroke-linecap="round"/>
+
+  <!-- Magnifying glass handle -->
+  <line x1="63" y1="63" x2="83" y2="83" stroke="url(#grad)" stroke-width="8" stroke-linecap="round"/>
+
+  <!-- Letter S inside -->
+  <path d="
+    M52 32
+    C52 32 34 30 34 38
+    C34 44 50 45 52 52
+    C54 59 36 60 36 60
+  " stroke="url(#grad)" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Small upward arrow -->
+  <polyline points="50,26 54,30 58,26" stroke="url(#grad)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Small downward arrow -->
+  <polyline points="34,60 38,64 42,60" stroke="url(#grad)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

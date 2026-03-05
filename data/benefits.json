@@ -1,0 +1,36 @@
+{
+  "benefits": [
+    {
+      "id": "ben_hotel_discount",
+      "title": "Hotel Discount",
+      "description": "Get 15% off hotel stays at participating chains",
+      "discount_percent": 15,
+      "merchant_categories": ["hotel", "travel"],
+      "eligible_merchants": ["merch_marriott_001", "merch_hilton_001"]
+    },
+    {
+      "id": "ben_travel_incentive",
+      "title": "Travel Incentive",
+      "description": "Earn 2x points on all travel bookings",
+      "discount_percent": 5,
+      "merchant_categories": ["travel", "airlines"],
+      "eligible_merchants": ["merch_united_001"]
+    },
+    {
+      "id": "ben_amex_travel_credit",
+      "title": "$200 Annual Travel Credit",
+      "description": "Get $200 credit toward travel purchases",
+      "discount_percent": 25,
+      "merchant_categories": ["travel", "hotel", "airlines"],
+      "eligible_merchants": ["merch_marriott_001", "merch_hilton_001", "merch_united_001"]
+    },
+    {
+      "id": "ben_dining_credit",
+      "title": "$100 Dining Credit",
+      "description": "Credit toward restaurant purchases via Amex Offers",
+      "discount_percent": 10,
+      "merchant_categories": ["restaurant", "dining"],
+      "eligible_merchants": ["merch_restaurant_sf"]
+    }
+  ]
+}

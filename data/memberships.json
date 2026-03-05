@@ -1,0 +1,31 @@
+{
+  "memberships": [
+    {
+      "id": "mem_ieee_001",
+      "name": "IEEE Professional Membership",
+      "category": "professional",
+      "description": "Institute of Electrical and Electronics Engineers",
+      "logo": "https://www.ieee.org/content/dam/ieee-org/images/about/logo/ieee-logo-large.png",
+      "logo_local": "/images/ieee_logo.svg",
+      "associated_benefits": ["ben_hotel_discount", "ben_travel_incentive"]
+    },
+    {
+      "id": "mem_iei_001",
+      "name": "IEI Membership",
+      "category": "professional",
+      "description": "Institution of Engineers India",
+      "logo": "https://www.ieiglobal.org/images/iei_logo.png",
+      "logo_local": "/images/iei_logo.png",
+      "associated_benefits": ["ben_hotel_discount", "ben_conference_discount"]
+    },
+    {
+      "id": "mem_ndl_001",
+      "name": "National Digital Library Membership",
+      "category": "academic",
+      "description": "National Digital Library of India",
+      "logo": "https://ndl.iitkgp.ac.in/logo.png",
+      "logo_local": "/images/ndl_logo.png",
+      "associated_benefits": ["ben_resource_access", "ben_journal_discount"]
+    }
+  ]
+}

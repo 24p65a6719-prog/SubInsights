@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SubInsights - Subscription Marketplace</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .user-avatar:hover {
+            border-color: #667eea;
+            transform: scale(1.08);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .user-info {
+            cursor: pointer;
+        }
+
+        .user-info:hover #userName {
+            color: #667eea;
+        }
+
+        #userName {
+            transition: color 0.2s;
+        }
+
+        /* Profile Panel */
+        .profile-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(3px);
+            display: none;
+        }
+
+        .profile-panel {
+            position: fixed;
+            top: 0;
+            right: -420px;
+            width: 380px;
+            height: 100vh;
+            background: white;
+            z-index: 9999;
+            box-shadow: -8px 0 40px rgba(0, 0, 0, 0.18);
+            display: flex;
+            flex-direction: column;
+            transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto;
+        }
+
+        .profile-panel.open {
+            right: 0;
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 30px 24px 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        .profile-close {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .profile-close:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        .profile-pic-wrap {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 12px;
+        }
+
+        .profile-pic {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            font-size: 36px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(255, 255, 255, 0.6);
+            overflow: hidden;
+            cursor: pointer;
+            transition: filter 0.2s;
+        }
+
+        .profile-pic:hover {
+            filter: brightness(0.82);
+        }
+
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pic-upload-icon {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            background: white;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-name-display {
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-email-display {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 13px;
+        }
+
+        .profile-body {
+            padding: 24px;
+            flex: 1;
+        }
+
+        .profile-section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #7f8c8d;
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .profile-field {
+            margin-bottom: 16px;
+        }
+
+        .profile-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 6px;
+        }
+
+        .profile-field input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #2c3e50;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        .profile-field input:focus {
+            border-color: #667eea;
+        }
+
+        .profile-field input:disabled {
+            background: #f8f9fa;
+            color: #7f8c8d;
+            cursor: not-allowed;
+        }
+
+        .profile-save-btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .profile-save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .profile-saved-msg {
+            text-align: center;
+            color: #27ae60;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .btn-logout {
+            padding: 8px 16px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #7f8c8d;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: 2px solid #ecf0f1;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            color: #7f8c8d;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .tab-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .subscriptions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .subscription-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .subscription-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            padding: 25px 20px;
+            background: linear-gradient(135deg, var(--color) 0%, rgba(0, 0, 0, 0.1) 100%);
+            color: white;
+            position: relative;
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .card-icon img {
+            max-width: 180px;
+            max-height: 120px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            background: transparent;
+            mix-blend-mode: multiply;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .card-tier {
+            font-size: 12px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-body {
+            padding: 25px 20px;
+        }
+
+        .price-section {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+
+        .price {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--color);
+        }
+
+        .price-period {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .description {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .features-list {
+            margin: 25px 0;
+        }
+
+        .features-list h4 {
+            font-size: 13px;
+            text-transform: uppercase;
+            color: #7f8c8d;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 13px;
+            color: #555;
+        }
+
+        .feature-item::before {
+            content: "✓";
+            color: var(--color);
+            font-weight: bold;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .benefits-preview {
+            background: #f5f7fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .benefits-preview h5 {
+            font-size: 12px;
+            color: var(--color);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .benefit-tag {
+            display: inline-block;
+            background: white;
+            color: var(--color);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-right: 6px;
+            margin-bottom: 6px;
+            border: 1px solid var(--color);
+        }
+
+        .card-footer {
+            padding: 20px;
+            border-top: 1px solid #ecf0f1;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 12px;
+            background: var(--color);
+            color: white;
+            border: 2px solid var(--color);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            background: var(--color);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            color: var(--color);
+            border: 2px solid var(--color);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--color);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #f39c12;
+            color: white;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+
+        .badge.popular {
+            background: #e74c3c;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            opacity: 0.5;
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .subscriptions-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .nav-right {
+                gap: 10px;
+            }
+
+            .user-info {
+                display: none;
+            }
+
+            .card-header {
+                padding: 20px;
+            }
+
+            .card-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <div class="logo"><img src="/images/logo.svg" alt="SubInsights"
+                style="height:32px;vertical-align:middle;margin-right:8px;">SubInsights</div>
+        <div class="nav-right">
+            <div class="user-info" onclick="openProfilePanel()" title="Edit Profile">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div>
+                    <div id="userName" style="font-weight: 600; color: #2c3e50;">User</div>
+                    <div style="font-size:11px;color:#7f8c8d;">View Profile ▾</div>
+                </div>
+            </div>
+            <button class="btn-logout" id="logoutBtn">Logout</button>
+        </div>
+    </div>
+
+    <!-- Profile Overlay -->
+    <div class="profile-overlay" id="profileOverlay" onclick="closeProfilePanel()"></div>
+
+    <!-- Profile Panel -->
+    <div class="profile-panel" id="profilePanel">
+        <div class="profile-header">
+            <button class="profile-close" onclick="closeProfilePanel()">✕</button>
+            <div class="profile-pic-wrap">
+                <div class="profile-pic" id="profilePic" onclick="document.getElementById('picInput').click()">U</div>
+                <div class="pic-upload-icon" onclick="document.getElementById('picInput').click()">📷</div>
+                <input type="file" id="picInput" accept="image/*" style="display:none;"
+                    onchange="handlePicUpload(event)">
+            </div>
+            <div class="profile-name-display" id="profileNameDisplay">User</div>
+            <div class="profile-email-display" id="profileEmailDisplay">user@example.com</div>
+        </div>
+
+        <div class="profile-body">
+            <div class="profile-section-title">Personal Information</div>
+
+            <div class="profile-field">
+                <label>First Name</label>
+                <input type="text" id="pFirstName" placeholder="John">
+            </div>
+            <div class="profile-field">
+                <label>Last Name</label>
+                <input type="text" id="pLastName" placeholder="Doe">
+            </div>
+            <div class="profile-field">
+                <label>Email Address</label>
+                <input type="email" id="pEmail" placeholder="you@example.com" disabled>
+            </div>
+            <div class="profile-field">
+                <label>Phone Number</label>
+                <input type="tel" id="pPhone" placeholder="+1234567890">
+            </div>
+
+            <button class="profile-save-btn" onclick="saveProfile()">💾 Save Changes</button>
+            <div class="profile-saved-msg" id="profileSavedMsg">✅ Profile updated successfully!</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div id="alertContainer"></div>
+
+        <div class="header">
+            <h1>Choose Your Subscription</h1>
+            <p>Access exclusive benefits, discounts, and rewards tailored to your lifestyle. Start your journey to
+                smarter savings today!</p>
+        </div>
+
+        <div class="filter-tabs">
+            <button class="tab-btn active" data-filter="all">All Plans</button>
+            <button class="tab-btn" data-filter="basic">Basic</button>
+            <button class="tab-btn" data-filter="premium">Premium</button>
+            <button class="tab-btn" data-filter="elite">Elite</button>
+        </div>
+
+        <div id="subscriptionsContainer" class="subscriptions-grid">
+            <!-- Subscriptions will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        const alertContainer = document.getElementById('alertContainer');
+        const subscriptionsContainer = document.getElementById('subscriptionsContainer');
+        const filterButtons = document.querySelectorAll('.tab-btn');
+        let subscriptions = [];
+        let currentFilter = 'all';
+
+        // Check authentication
+        const sessionId = localStorage.getItem('sessionId');
+        const userEmail = localStorage.getItem('userEmail');
+
+        if (!sessionId) {
+            window.location.href = 'auth/login.html';
+        }
+
+        // Load user profile
+        loadUserProfile();
+
+        // Setup filter buttons
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                renderSubscriptions();
+            });
+        });
+
+        // Logout button
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('sessionId');
+            localStorage.removeItem('userEmail');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('full_name');
+            localStorage.removeItem('user_id');
+            window.location.href = '/login-register.html';
+        });
+
+        async function loadUserProfile() {
+            // Immediately show name from localStorage (set at login/register time)
+            const storedName = localStorage.getItem('userName') || localStorage.getItem('full_name');
+            if (storedName) {
+                document.getElementById('userName').textContent = storedName;
+                document.getElementById('userAvatar').textContent = storedName.charAt(0).toUpperCase();
+            }
+
+            // Also try to fetch from API to keep it fresh
+            try {
+                const response = await fetch('/api/auth/profile', {
+                    headers: {
+                        'Authorization': 'Bearer ' + sessionId
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const user = data.user;
+                    document.getElementById('userName').textContent = user.full_name;
+                    document.getElementById('userAvatar').textContent = user.full_name.charAt(0).toUpperCase();
+                    localStorage.setItem('userName', user.full_name);
+                }
+            } catch (error) {
+                console.log('Using stored name from localStorage');
+            }
+        }
+
+        async function loadSubscriptions() {
+            try {
+                const response = await fetch('/api/subscriptions', {
+                    headers: {
+                        'X-Session-ID': sessionId
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    // Normalize API response to use 'id' instead of 'subscription_id'
+                    subscriptions = data.subscriptions.map(sub => ({
+                        ...sub,
+                        id: sub.subscription_id || sub.id
+                    }));
+                } else {
+                    loadMockSubscriptions();
+                }
+            } catch (error) {
+                console.log('Using mock data for demo');
+                loadMockSubscriptions();
+            }
+
+            renderSubscriptions();
+        }
+
+        function loadMockSubscriptions() {
+            subscriptions = [
+                {
+                    id: 'sub_ieee_001',
+                    name: 'IEEE Membership Plus',
+                    description: 'Professional technical membership with unlimited access to research, conferences, and career resources.',
+                    price: 199.99,
+                    tier: 'basic',
+                    icon: '🔬',
+                    logo: '/images/ieee_logo.svg',
+                    logoBg: '#ffffff',
+                    color: '#00629B',
+                    badge: 'POPULAR',
+                    features: [
+                        '25% Conference Discounts',
+                        'Unlimited Journal Access',
+                        '25% Hotel Discounts',
+                        '50% Training Discounts'
+                    ],
+                    benefits: [
+                        { name: 'Conference Discount', discount: '25%' },
+                        { name: 'Journal Access', discount: '∞' },
+                        { name: 'Hotel Discount', discount: '25%' },
+                        { name: 'Training Access', discount: '50%' }
+                    ]
+                },
+                {
+                    id: 'sub_iei_001',
+                    name: 'IEI Club Premium',
+                    description: 'Professional networking with exclusive travel and hospitality benefits. Perfect for corporate professionals.',
+                    price: 299.99,
+                    tier: 'premium',
+                    icon: '🏢',
+                    logo: '/images/iei_logo.png',
+                    logoBg: '#ffffff',
+                    color: '#4a90a4',
+                    badge: 'PREMIUM PLAN',
+                    features: [
+                        '30% Hotel Discount',
+                        '20% Dining Rewards',
+                        '$500 Travel Credit',
+                        'Priority Support'
+                    ],
+                    benefits: [
+                        { name: 'Hotel Discount', discount: '30%' },
+                        { name: 'Dining Rewards', discount: '20%' },
+                        { name: 'Travel Credit', discount: '$500' },
+                        { name: 'VIP Support', discount: '24/7' }
+                    ]
+                },
+                {
+                    id: 'sub_library_001',
+                    name: 'National Library Elite',
+                    description: 'Premium digital library membership with unlimited eBook and research access, plus exclusive member perks.',
+                    price: 149.99,
+                    tier: 'elite',
+                    icon: '📚',
+                    logo: '/images/ndl_logo.png',
+                    logoBg: '#ffffff',
+                    color: '#27ae60',
+                    badge: 'ELITE PLAN',
+                    features: [
+                        'Unlimited eBook Access',
+                        '15% Cafe Discount',
+                        '40% Event Discounts',
+                        'Free VIP Parking'
+                    ],
+                    benefits: [
+                        { name: 'eBook Access', discount: '∞' },
+                        { name: 'Cafe Discount', discount: '15%' },
+                        { name: 'Event Tickets', discount: '40%' },
+                        { name: 'VIP Parking', discount: 'FREE' }
+                    ]
+                }
+            ];
+        }
+
+        function renderSubscriptions() {
+            const filtered = currentFilter === 'all'
+                ? subscriptions
+                : subscriptions.filter(s => s.tier === currentFilter);
+
+            if (filtered.length === 0) {
+                subscriptionsContainer.innerHTML = '<div class="empty-state"><p>No subscriptions found</p></div>';
+                return;
+            }
+
+            subscriptionsContainer.innerHTML = filtered.map(sub => `
+                <div class="subscription-card" style="--color: ${sub.color}">
+                    <div class="card-header">
+                        <div class="card-icon">
+                            <img src="${sub.logo}" alt="${sub.name} logo">
+                        </div>
+                        <div class="card-title" style="margin-top:10px">${sub.name}</div>
+                        <div class="card-tier">${sub.tier} plan</div>
+                        ${sub.badge ? `<div class="badge ${sub.badge.toLowerCase().replace(' ', '-')}">${sub.badge}</div>` : ''}
+                    </div>
+
+                    <div class="card-body">
+                        <div class="price-section">
+                            <span class="price">$${sub.price.toFixed(2)}</span>
+                            <span class="price-period">/year</span>
+                        </div>
+
+                        <p class="description">${sub.description}</p>
+
+                        <div class="features-list">
+                            <h4>Key Features</h4>
+                            ${sub.features.map(f => `
+                                <div class="feature-item">${f}</div>
+                            `).join('')}
+                        </div>
+
+                        <div class="benefits-preview">
+                            <h5>Available Benefits</h5>
+                            ${sub.benefits.slice(0, 3).map(b => `
+                                <span class="benefit-tag">${b.name} ${b.discount}</span>
+                            `).join('')}
+                            ${sub.benefits.length > 3 ? `<span style="font-size: 11px; color: #7f8c8d;">+${sub.benefits.length - 3} more</span>` : ''}
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        <button class="btn-primary" data-action="buy" data-sub-id="${sub.id}" data-sub-name="${sub.name}">
+                            Buy Subscription
+                        </button>
+                        <button class="btn-secondary" data-action="details" data-sub-id="${sub.id}">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Attach event listeners to buttons
+            document.querySelectorAll('[data-action="buy"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const subId = this.getAttribute('data-sub-id');
+                    const subName = this.getAttribute('data-sub-name');
+                    buySubscription(subId, subName);
+                });
+            });
+
+            document.querySelectorAll('[data-action="details"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const subId = this.getAttribute('data-sub-id');
+                    viewDetails(subId);
+                });
+            });
+        }
+
+        function buySubscription(subscriptionId, subscriptionName) {
+            showAlert(`Purchasing "${subscriptionName}"...`, 'info');
+
+            // Store subscription for next step
+            localStorage.setItem('selectedSubscription', JSON.stringify({
+                id: subscriptionId,
+                name: subscriptionName
+            }));
+
+            // Redirect to subscription overview page
+            setTimeout(() => {
+                window.location.href = 'overview.html';
+            }, 1000);
+        }
+
+        function viewDetails(subscriptionId) {
+            const sub = subscriptions.find(s => s.id === subscriptionId);
+            if (sub) {
+                localStorage.setItem('selectedSubscription', JSON.stringify(sub));
+                window.location.href = 'overview.html';
+            }
+        }
+
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} show`;
+            alert.textContent = message;
+            alertContainer.innerHTML = '';
+            alertContainer.appendChild(alert);
+
+            if (type !== 'error') {
+                setTimeout(() => {
+                    alert.classList.remove('show');
+                }, 3000);
+            }
+        }
+
+        // Load subscriptions on page load
+        loadSubscriptions();
+
+        // ── Profile Panel ─────────────────────────────────────────────────
+        function openProfilePanel() {
+            document.getElementById('profileOverlay').style.display = 'block';
+            document.getElementById('profilePanel').classList.add('open');
+
+            // Populate fields from localStorage
+            const fullName = localStorage.getItem('userName') || localStorage.getItem('full_name') || '';
+            const email = localStorage.getItem('userEmail') || localStorage.getItem('email') || '';
+            const phone = localStorage.getItem('userPhone') || '';
+            const nameParts = fullName.split(' ');
+            const firstName = nameParts[0] || '';
+            const lastName = nameParts.slice(1).join(' ') || '';
+
+            document.getElementById('pFirstName').value = firstName;
+            document.getElementById('pLastName').value = lastName;
+            document.getElementById('pEmail').value = email;
+            document.getElementById('pPhone').value = phone;
+            document.getElementById('profileNameDisplay').textContent = fullName || 'Your Profile';
+            document.getElementById('profileEmailDisplay').textContent = email || '';
+
+            // Restore profile pic if saved
+            const savedPic = localStorage.getItem('profilePic');
+            const picEl = document.getElementById('profilePic');
+            if (savedPic) {
+                picEl.innerHTML = `<img src="${savedPic}" alt="Profile">`;
+            } else {
+                picEl.textContent = firstName.charAt(0).toUpperCase() || 'U';
+            }
+        }
+
+        function closeProfilePanel() {
+            document.getElementById('profileOverlay').style.display = 'none';
+            document.getElementById('profilePanel').classList.remove('open');
+            document.getElementById('profileSavedMsg').style.display = 'none';
+        }
+
+        function handlePicUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const dataUrl = e.target.result;
+                // Update profile panel pic
+                document.getElementById('profilePic').innerHTML = `<img src="${dataUrl}" alt="Profile">`;
+                // Update navbar avatar
+                const avatarEl = document.getElementById('userAvatar');
+                avatarEl.innerHTML = `<img src="${dataUrl}" alt="Profile">`;
+                // Save to localStorage
+                localStorage.setItem('profilePic', dataUrl);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveProfile() {
+            const firstName = document.getElementById('pFirstName').value.trim();
+            const lastName = document.getElementById('pLastName').value.trim();
+            const phone = document.getElementById('pPhone').value.trim();
+            const fullName = `${firstName} ${lastName}`.trim();
+
+            if (!firstName) { alert('First name is required.'); return; }
+
+            // Save to localStorage
+            localStorage.setItem('userName', fullName);
+            localStorage.setItem('full_name', fullName);
+            localStorage.setItem('userPhone', phone);
+
+            // Update navbar display
+            document.getElementById('userName').textContent = fullName;
+            const avatarEl = document.getElementById('userAvatar');
+            const savedPic = localStorage.getItem('profilePic');
+            if (!savedPic) {
+                avatarEl.textContent = firstName.charAt(0).toUpperCase();
+            }
+
+            // Update panel header
+            document.getElementById('profileNameDisplay').textContent = fullName;
+
+            // Show success message
+            const msg = document.getElementById('profileSavedMsg');
+            msg.style.display = 'block';
+            setTimeout(() => { msg.style.display = 'none'; }, 3000);
+        }
+
+        // On page load — restore profile pic if saved
+        window.addEventListener('load', () => {
+            const savedPic = localStorage.getItem('profilePic');
+            if (savedPic) {
+                const avatarEl = document.getElementById('userAvatar');
+                avatarEl.innerHTML = `<img src="${savedPic}" alt="Profile">`;
+            }
+        });
+    </script>
+</body>
+
+</html>
