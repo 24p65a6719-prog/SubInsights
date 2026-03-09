@@ -90,10 +90,44 @@ class AppTheme {
         return const Color(0xFF00838F);
       case 'book_fair':
         return const Color(0xFF4E342E);
+      case 'fitness':
+        return const Color(0xFFFF5252);
+      case 'transport':
+        return const Color(0xFF6A1B9A);
+      case 'entertainment':
+        return const Color(0xFFFF6F00);
       default:
         return Colors.grey;
     }
   }
+
+  /// Category colors map for quick access
+  static const Map<String, Color> categoryColors = {
+    'Hotels': Color(0xFF7B1FA2),
+    'Restaurants': Color(0xFFC62828),
+    'Shops': Color(0xFFE65100),
+    'Education': Color(0xFF2E7D32),
+    'Conferences': Color(0xFF00838F),
+    'Book Fairs': Color(0xFF4E342E),
+    'Banking': Color(0xFF1565C0),
+    'Fitness': Color(0xFFFF5252),
+    'Transport': Color(0xFF6A1B9A),
+    'Entertainment': Color(0xFFFF6F00),
+  };
+
+  /// Category icons map for quick access
+  static const Map<String, IconData> categoryIcons = {
+    'Hotels': Icons.hotel,
+    'Restaurants': Icons.restaurant,
+    'Shops': Icons.shopping_bag,
+    'Education': Icons.school,
+    'Conferences': Icons.event,
+    'Book Fairs': Icons.menu_book,
+    'Banking': Icons.account_balance,
+    'Fitness': Icons.fitness_center,
+    'Transport': Icons.directions_bus,
+    'Entertainment': Icons.movie,
+  };
 
   /// Get icon from string name
   static IconData getIconFromString(String iconName) {
@@ -126,6 +160,36 @@ class AppTheme {
         return Icons.menu_book;
       case 'card_membership':
         return Icons.card_membership;
+      case 'account_balance_wallet':
+        return Icons.account_balance_wallet;
+      case 'restaurant_menu':
+        return Icons.restaurant_menu;
+      case 'local_dining':
+        return Icons.local_dining;
+      case 'checkroom':
+        return Icons.checkroom;
+      case 'dashboard':
+        return Icons.dashboard;
+      case 'store':
+        return Icons.store;
+      case 'auto_stories':
+        return Icons.auto_stories;
+      case 'work':
+        return Icons.work;
+      case 'trending_up':
+        return Icons.trending_up;
+      case 'rocket_launch':
+        return Icons.rocket_launch;
+      case 'groups':
+        return Icons.groups;
+      case 'flight':
+        return Icons.flight;
+      case 'night_shelter':
+        return Icons.night_shelter;
+      case 'fitness_center':
+        return Icons.fitness_center;
+      case 'medical_services':
+        return Icons.medical_services;
       default:
         return Icons.star;
     }

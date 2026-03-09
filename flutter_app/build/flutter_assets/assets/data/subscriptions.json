@@ -67,6 +67,51 @@
       "expiry_date": "2027-09-30"
     },
     {
+      "id": "sub_kotak_cc",
+      "name": "Kotak 811 Dream Different",
+      "provider": "Kotak Mahindra Bank",
+      "category": "banking",
+      "icon": "account_balance_wallet",
+      "color": "#ED1C24",
+      "description": "Zero balance savings with rewards and cashback offers",
+      "associated_benefits": [
+        "ben_kotak_shopping_cashback",
+        "ben_kotak_travel_discount"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-08-31"
+    },
+    {
+      "id": "sub_yes_bank_cc",
+      "name": "YES FIRST Exclusive",
+      "provider": "YES Bank",
+      "category": "banking",
+      "icon": "credit_card",
+      "color": "#003399",
+      "description": "Premium lifestyle card with travel and dining privileges",
+      "associated_benefits": [
+        "ben_yes_lounge_access",
+        "ben_yes_dining_offer"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-05-31"
+    },
+    {
+      "id": "sub_indusind_cc",
+      "name": "IndusInd Legend Credit Card",
+      "provider": "IndusInd Bank",
+      "category": "banking",
+      "icon": "credit_card",
+      "color": "#662D91",
+      "description": "Exclusive card with golf, travel and lifestyle benefits",
+      "associated_benefits": [
+        "ben_indusind_golf_offer",
+        "ben_indusind_movie_discount"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-10-31"
+    },
+    {
       "id": "sub_zomato_gold",
       "name": "Zomato Gold",
       "provider": "Zomato",
@@ -97,6 +142,36 @@
       "expiry_date": "2026-11-30"
     },
     {
+      "id": "sub_easydiner_prime",
+      "name": "EazyDiner Prime",
+      "provider": "EazyDiner",
+      "category": "restaurant",
+      "icon": "restaurant_menu",
+      "color": "#FF6B6B",
+      "description": "Exclusive restaurant deals, priority reservations, and dining rewards",
+      "associated_benefits": [
+        "ben_easydiner_dining_offer",
+        "ben_easydiner_birthday_special"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-02-28"
+    },
+    {
+      "id": "sub_dineout_passport",
+      "name": "Dineout Passport",
+      "provider": "Dineout",
+      "category": "restaurant",
+      "icon": "local_dining",
+      "color": "#00B2A9",
+      "description": "Flat discounts at 10000+ restaurants across India",
+      "associated_benefits": [
+        "ben_dineout_flat_discount",
+        "ben_dineout_priority_booking"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-01-31"
+    },
+    {
       "id": "sub_amazon_prime",
       "name": "Amazon Prime",
       "provider": "Amazon India",
@@ -106,7 +181,8 @@
       "description": "Free delivery, Prime Video, Prime Music, and exclusive deals",
       "associated_benefits": [
         "ben_reliance_member_discount",
-        "ben_icici_amazon_offer"
+        "ben_icici_amazon_offer",
+        "ben_amazon_fresh_discount"
       ],
       "is_active": true,
       "expiry_date": "2027-01-15"
@@ -121,10 +197,57 @@
       "description": "Free delivery, early access to sales, and coins rewards",
       "associated_benefits": [
         "ben_croma_exchange_bonus",
-        "ben_axis_flipkart_offer"
+        "ben_axis_flipkart_offer",
+        "ben_flipkart_supercoins"
       ],
       "is_active": true,
       "expiry_date": "2026-10-31"
+    },
+    {
+      "id": "sub_myntra_insider",
+      "name": "Myntra Insider",
+      "provider": "Myntra",
+      "category": "shop",
+      "icon": "checkroom",
+      "color": "#FF3F6C",
+      "description": "Fashion rewards, early access to sales, and exclusive offers",
+      "associated_benefits": [
+        "ben_myntra_insider_discount",
+        "ben_myntra_birthday_coupon"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-04-30"
+    },
+    {
+      "id": "sub_tata_neu",
+      "name": "Tata Neu Plus",
+      "provider": "Tata Digital",
+      "category": "shop",
+      "icon": "dashboard",
+      "color": "#5F259F",
+      "description": "Universal rewards across Tata brands - BigBasket, Croma, Titan, and more",
+      "associated_benefits": [
+        "ben_tata_neu_rewards",
+        "ben_bigbasket_discount",
+        "ben_croma_tata_offer"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-06-30"
+    },
+    {
+      "id": "sub_jiomart_plus",
+      "name": "JioMart Plus",
+      "provider": "Reliance Retail",
+      "category": "shop",
+      "icon": "store",
+      "color": "#0056A2",
+      "description": "Extra discounts, free delivery, and exclusive member prices",
+      "associated_benefits": [
+        "ben_jiomart_member_price",
+        "ben_reliance_fresh_discount"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-03-31"
     },
     {
       "id": "sub_ieee",
@@ -174,6 +297,51 @@
       "expiry_date": "2027-03-31"
     },
     {
+      "id": "sub_coursera_plus",
+      "name": "Coursera Plus",
+      "provider": "Coursera",
+      "category": "education",
+      "icon": "auto_stories",
+      "color": "#0056D2",
+      "description": "Unlimited access to 7,000+ courses, certificates, and specializations",
+      "associated_benefits": [
+        "ben_coursera_certificate_discount",
+        "ben_coursera_enterprise_offer"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-07-31"
+    },
+    {
+      "id": "sub_linkedin_premium",
+      "name": "LinkedIn Premium Career",
+      "provider": "LinkedIn",
+      "category": "education",
+      "icon": "work",
+      "color": "#0A66C2",
+      "description": "InMail credits, LinkedIn Learning, and career insights",
+      "associated_benefits": [
+        "ben_linkedin_learning_access",
+        "ben_linkedin_job_insights"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-05-31"
+    },
+    {
+      "id": "sub_upgrad_member",
+      "name": "upGrad Learner Plus",
+      "provider": "upGrad",
+      "category": "education",
+      "icon": "trending_up",
+      "color": "#FF0000",
+      "description": "Career support, mentorship, and course discounts for learners",
+      "associated_benefits": [
+        "ben_upgrad_course_discount",
+        "ben_upgrad_career_services"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-08-31"
+    },
+    {
       "id": "sub_bookmyshow",
       "name": "BookMyShow Insider",
       "provider": "BookMyShow",
@@ -188,6 +356,111 @@
       ],
       "is_active": true,
       "expiry_date": "2026-12-31"
+    },
+    {
+      "id": "sub_nasscom_member",
+      "name": "NASSCOM Startup Membership",
+      "provider": "NASSCOM",
+      "category": "conference",
+      "icon": "rocket_launch",
+      "color": "#1E3A5F",
+      "description": "Access to tech events, networking, and startup resources",
+      "associated_benefits": [
+        "ben_nasscom_event_discount",
+        "ben_nasscom_coworking_access"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-09-30"
+    },
+    {
+      "id": "sub_tie_global",
+      "name": "TiE Global Membership",
+      "provider": "TiE",
+      "category": "conference",
+      "icon": "groups",
+      "color": "#FF6B00",
+      "description": "Entrepreneur network with mentorship, events, and funding access",
+      "associated_benefits": [
+        "ben_tie_event_access",
+        "ben_tie_mentorship_program"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-04-30"
+    },
+    {
+      "id": "sub_mmtblack",
+      "name": "MakeMyTrip Black",
+      "provider": "MakeMyTrip",
+      "category": "hotel",
+      "icon": "flight",
+      "color": "#EF4123",
+      "description": "Exclusive travel benefits with free cancellation and member-only prices",
+      "associated_benefits": [
+        "ben_mmt_hotel_discount",
+        "ben_mmt_flight_cashback"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-06-30"
+    },
+    {
+      "id": "sub_goibibo_plus",
+      "name": "Goibibo goCash+",
+      "provider": "Goibibo",
+      "category": "hotel",
+      "icon": "hotel",
+      "color": "#EC5B24",
+      "description": "Extra goCash on bookings and exclusive member discounts",
+      "associated_benefits": [
+        "ben_goibibo_hotel_offer",
+        "ben_goibibo_bus_discount"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-02-28"
+    },
+    {
+      "id": "sub_oyo_wizard",
+      "name": "OYO Wizard",
+      "provider": "OYO Rooms",
+      "category": "hotel",
+      "icon": "night_shelter",
+      "color": "#EE2E24",
+      "description": "Flat discounts, free upgrades, and priority support at OYO properties",
+      "associated_benefits": [
+        "ben_oyo_wizard_discount",
+        "ben_oyo_free_upgrade"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-01-31"
+    },
+    {
+      "id": "sub_cult_elite",
+      "name": "Cult.fit Elite",
+      "provider": "Cult.fit",
+      "category": "fitness",
+      "icon": "fitness_center",
+      "color": "#FF5A5F",
+      "description": "Unlimited gym, yoga, dance, and fitness classes across centers",
+      "associated_benefits": [
+        "ben_cult_guest_pass",
+        "ben_cult_merchandise_discount"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-03-31"
+    },
+    {
+      "id": "sub_healthians_plus",
+      "name": "Healthians Plus",
+      "provider": "Healthians",
+      "category": "fitness",
+      "icon": "medical_services",
+      "color": "#00A8E1",
+      "description": "Discounted health checkups and home sample collection",
+      "associated_benefits": [
+        "ben_healthians_checkup_discount",
+        "ben_healthians_free_reports"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-05-31"
     }
   ]
 }
