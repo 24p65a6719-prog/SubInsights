@@ -13,11 +13,12 @@
         "flutter",
         "flutter_animate",
         "flutter_local_notifications",
+        "flutter_map",
         "flutter_secure_storage",
         "geolocator",
-        "google_maps_flutter",
         "google_sign_in",
         "intl",
+        "latlong2",
         "lottie",
         "provider",
         "shared_preferences",
@@ -153,14 +154,27 @@
       ]
     },
     {
-      "name": "google_maps_flutter",
-      "version": "2.14.2",
+      "name": "latlong2",
+      "version": "0.9.1",
       "dependencies": [
+        "intl"
+      ]
+    },
+    {
+      "name": "flutter_map",
+      "version": "7.0.2",
+      "dependencies": [
+        "async",
+        "collection",
+        "dart_earcut",
         "flutter",
-        "google_maps_flutter_android",
-        "google_maps_flutter_ios",
-        "google_maps_flutter_platform_interface",
-        "google_maps_flutter_web"
+        "http",
+        "latlong2",
+        "logger",
+        "meta",
+        "polylabel",
+        "proj4dart",
+        "vector_math"
       ]
     },
     {
@@ -514,46 +528,39 @@
       ]
     },
     {
-      "name": "google_maps_flutter_web",
-      "version": "0.5.14+3",
+      "name": "proj4dart",
+      "version": "2.1.0",
+      "dependencies": [
+        "meta",
+        "mgrs_dart",
+        "wkt_parser"
+      ]
+    },
+    {
+      "name": "polylabel",
+      "version": "1.0.1",
+      "dependencies": [
+        "collection"
+      ]
+    },
+    {
+      "name": "logger",
+      "version": "2.6.2",
+      "dependencies": [
+        "meta"
+      ]
+    },
+    {
+      "name": "dart_earcut",
+      "version": "1.2.0",
+      "dependencies": []
+    },
+    {
+      "name": "async",
+      "version": "2.13.0",
       "dependencies": [
         "collection",
-        "flutter",
-        "flutter_web_plugins",
-        "google_maps",
-        "google_maps_flutter_platform_interface",
-        "sanitize_html",
-        "stream_transform",
-        "web"
-      ]
-    },
-    {
-      "name": "google_maps_flutter_platform_interface",
-      "version": "2.14.2",
-      "dependencies": [
-        "collection",
-        "flutter",
-        "plugin_platform_interface",
-        "stream_transform"
-      ]
-    },
-    {
-      "name": "google_maps_flutter_ios",
-      "version": "2.17.5",
-      "dependencies": [
-        "flutter",
-        "google_maps_flutter_platform_interface",
-        "stream_transform"
-      ]
-    },
-    {
-      "name": "google_maps_flutter_android",
-      "version": "2.19.2",
-      "dependencies": [
-        "flutter",
-        "flutter_plugin_android_lifecycle",
-        "google_maps_flutter_platform_interface",
-        "stream_transform"
+        "meta"
       ]
     },
     {
@@ -646,14 +653,6 @@
       "name": "characters",
       "version": "1.4.1",
       "dependencies": []
-    },
-    {
-      "name": "async",
-      "version": "2.13.0",
-      "dependencies": [
-        "collection",
-        "meta"
-      ]
     },
     {
       "name": "leak_tracker_testing",
@@ -845,31 +844,15 @@
       ]
     },
     {
-      "name": "stream_transform",
-      "version": "2.1.1",
+      "name": "wkt_parser",
+      "version": "2.0.0",
       "dependencies": []
     },
     {
-      "name": "sanitize_html",
-      "version": "2.1.0",
+      "name": "mgrs_dart",
+      "version": "2.0.0",
       "dependencies": [
-        "html",
-        "meta"
-      ]
-    },
-    {
-      "name": "google_maps",
-      "version": "8.2.0",
-      "dependencies": [
-        "meta",
-        "web"
-      ]
-    },
-    {
-      "name": "flutter_plugin_android_lifecycle",
-      "version": "2.0.33",
-      "dependencies": [
-        "flutter"
+        "unicode"
       ]
     },
     {
@@ -965,11 +948,10 @@
       "dependencies": []
     },
     {
-      "name": "html",
-      "version": "0.15.6",
+      "name": "unicode",
+      "version": "0.3.1",
       "dependencies": [
-        "csslib",
-        "source_span"
+        "lists"
       ]
     },
     {
@@ -1005,10 +987,10 @@
       ]
     },
     {
-      "name": "csslib",
-      "version": "1.0.2",
+      "name": "lists",
+      "version": "1.0.1",
       "dependencies": [
-        "source_span"
+        "meta"
       ]
     },
     {

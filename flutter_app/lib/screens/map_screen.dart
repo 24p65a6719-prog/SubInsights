@@ -1,6 +1,6 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 import '../providers/app_state.dart';
 import '../models/merchant.dart';
@@ -15,21 +15,28 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
-  final Completer<GoogleMapController> _controller = Completer();
+  final MapController _mapController = MapController();
   
-  Set<Marker> _markers = {};
-  Circle? _userLocationCircle;
   Merchant? _selectedMerchant;
   bool _isLoading = true;
   String? _selectedCategory;
   bool _showBottomSheet = false;
+  String _currentTileLayer = 'openstreetmap';
 
   // Default to Mumbai, India
-  static const LatLng _defaultLocation = LatLng(19.076, 72.8777);
+  static final LatLng _defaultLocation = LatLng(19.076, 72.8777);
   LatLng _currentLocation = _defaultLocation;
 
   late AnimationController _bottomSheetController;
   late Animation<double> _bottomSheetAnimation;
+
+  // Tile layer URLs
+  final Map<String, String> _tileLayers = {
+    'openstreetmap': 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    'cartodb_light': 'https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
+    'cartodb_dark': 'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+    'humanitarian': 'https://a.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png',
+  };
 
   @override
   void initState() {
@@ -51,12 +58,12 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   @override
   void dispose() {
     _bottomSheetController.dispose();
+    _mapController.dispose();
     super.dispose();
   }
 
   Future<void> _initializeMap() async {
     await _getCurrentLocation();
-    _loadMarkers();
     setState(() => _isLoading = false);
   }
 
@@ -66,59 +73,22 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       final position = appState.locationService.currentPosition;
       
       if (position != null) {
-        _currentLocation = LatLng(position.latitude, position.longitude);
-        _updateUserLocationCircle();
+        setState(() {
+          _currentLocation = LatLng(position.latitude, position.longitude);
+        });
       }
     } catch (e) {
       debugPrint('Error getting location: $e');
     }
   }
 
-  void _updateUserLocationCircle() {
-    _userLocationCircle = Circle(
-      circleId: const CircleId('user_location'),
-      center: _currentLocation,
-      radius: 100,
-      fillColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-      strokeColor: Theme.of(context).colorScheme.primary,
-      strokeWidth: 2,
-    );
-  }
-
-  void _loadMarkers() {
+  List<Merchant> get _filteredMerchants {
     final appState = context.read<AppState>();
-    final merchants = _selectedCategory == null
+    return _selectedCategory == null
         ? appState.merchants
         : appState.merchants
             .where((m) => m.category == _selectedCategory)
             .toList();
-
-    final colorScheme = Theme.of(context).colorScheme;
-    
-    _markers = merchants.map((merchant) {
-      final categoryColor = AppTheme.categoryColors[merchant.category] ?? 
-          colorScheme.primary;
-      
-      return Marker(
-        markerId: MarkerId(merchant.id),
-        position: LatLng(merchant.latitude, merchant.longitude),
-        icon: BitmapDescriptor.defaultMarkerWithHue(
-          _getMarkerHue(categoryColor),
-        ),
-        infoWindow: InfoWindow(
-          title: merchant.name,
-          snippet: merchant.category,
-        ),
-        onTap: () => _onMarkerTapped(merchant),
-      );
-    }).toSet();
-
-    setState(() {});
-  }
-
-  double _getMarkerHue(Color color) {
-    HSVColor hsv = HSVColor.fromColor(color);
-    return hsv.hue;
   }
 
   void _onMarkerTapped(Merchant merchant) {
@@ -128,16 +98,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     });
     _bottomSheetController.forward();
     
-    _animateToLocation(
+    _mapController.move(
       LatLng(merchant.latitude, merchant.longitude),
-      zoom: 16,
-    );
-  }
-
-  Future<void> _animateToLocation(LatLng location, {double zoom = 14}) async {
-    final controller = await _controller.future;
-    await controller.animateCamera(
-      CameraUpdate.newLatLngZoom(location, zoom),
+      16,
     );
   }
 
@@ -152,14 +115,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   void _onCategorySelected(String? category) {
     setState(() => _selectedCategory = category);
-    _loadMarkers();
     _hideBottomSheet();
 
     if (category != null) {
-      final appState = context.read<AppState>();
-      final merchantsInCategory = appState.merchants
-          .where((m) => m.category == category)
-          .toList();
+      final merchantsInCategory = _filteredMerchants;
       
       if (merchantsInCategory.isNotEmpty) {
         // Calculate bounds
@@ -183,53 +142,120 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> _fitBounds(LatLng southwest, LatLng northeast) async {
-    final controller = await _controller.future;
-    await controller.animateCamera(
-      CameraUpdate.newLatLngBounds(
-        LatLngBounds(southwest: southwest, northeast: northeast),
-        50,
+  void _fitBounds(LatLng southwest, LatLng northeast) {
+    final bounds = LatLngBounds(southwest, northeast);
+    _mapController.fitCamera(
+      CameraFit.bounds(
+        bounds: bounds,
+        padding: const EdgeInsets.all(50),
       ),
     );
   }
 
-  Future<void> _goToCurrentLocation() async {
-    await _getCurrentLocation();
-    await _animateToLocation(_currentLocation, zoom: 15);
+  void _goToCurrentLocation() {
+    _getCurrentLocation().then((_) {
+      _mapController.move(_currentLocation, 15);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final merchants = _filteredMerchants;
 
     return Scaffold(
       body: Stack(
         children: [
           // Map
-          GoogleMap(
-            mapType: MapType.normal,
-            initialCameraPosition: CameraPosition(
-              target: _currentLocation,
-              zoom: 12,
+          FlutterMap(
+            mapController: _mapController,
+            options: MapOptions(
+              initialCenter: _currentLocation,
+              initialZoom: 12,
+              onTap: (_, __) => _hideBottomSheet(),
+              interactionOptions: const InteractionOptions(
+                flags: InteractiveFlag.all,
+              ),
             ),
-            onMapCreated: (controller) {
-              _controller.complete(controller);
-              _setMapStyle(controller);
-            },
-            markers: _markers,
-            circles: _userLocationCircle != null ? {_userLocationCircle!} : {},
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
-            zoomControlsEnabled: false,
-            compassEnabled: true,
-            onTap: (_) => _hideBottomSheet(),
+            children: [
+              // Tile Layer (OpenStreetMap)
+              TileLayer(
+                urlTemplate: _tileLayers[_currentTileLayer]!,
+                userAgentPackageName: 'com.subinsights.app',
+                maxZoom: 19,
+              ),
+              
+              // User location circle
+              CircleLayer(
+                circles: [
+                  CircleMarker(
+                    point: _currentLocation,
+                    radius: 80,
+                    color: colorScheme.primary.withValues(alpha: 0.2),
+                    borderColor: colorScheme.primary,
+                    borderStrokeWidth: 2,
+                    useRadiusInMeter: true,
+                  ),
+                  CircleMarker(
+                    point: _currentLocation,
+                    radius: 8,
+                    color: colorScheme.primary,
+                    borderColor: Colors.white,
+                    borderStrokeWidth: 3,
+                  ),
+                ],
+              ),
+              
+              // Merchant markers
+              MarkerLayer(
+                markers: merchants.map((merchant) {
+                  final categoryColor = AppTheme.categoryColors[merchant.category] ?? 
+                      colorScheme.primary;
+                  final categoryIcon = AppTheme.categoryIcons[merchant.category] ?? 
+                      Icons.place;
+                  final isSelected = _selectedMerchant?.id == merchant.id;
+                  
+                  return Marker(
+                    point: LatLng(merchant.latitude, merchant.longitude),
+                    width: isSelected ? 56 : 44,
+                    height: isSelected ? 56 : 44,
+                    child: GestureDetector(
+                      onTap: () => _onMarkerTapped(merchant),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 200),
+                        decoration: BoxDecoration(
+                          color: categoryColor,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white,
+                            width: isSelected ? 4 : 3,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: categoryColor.withValues(alpha: 0.4),
+                              blurRadius: isSelected ? 12 : 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Icon(
+                          categoryIcon,
+                          color: Colors.white,
+                          size: isSelected ? 28 : 22,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ],
           ),
 
           // Loading overlay
           if (_isLoading)
             Container(
-              color: colorScheme.surface.withOpacity(0.8),
+              color: colorScheme.surface.withValues(alpha: 0.8),
               child: const Center(
                 child: CircularProgressIndicator(),
               ),
@@ -266,6 +292,24 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   onPressed: _showMapTypeDialog,
                   heroTag: 'layers',
                 ),
+                const SizedBox(height: 12),
+                _buildFab(
+                  icon: Icons.add,
+                  onPressed: () => _mapController.move(
+                    _mapController.camera.center,
+                    _mapController.camera.zoom + 1,
+                  ),
+                  heroTag: 'zoom_in',
+                ),
+                const SizedBox(height: 8),
+                _buildFab(
+                  icon: Icons.remove,
+                  onPressed: () => _mapController.move(
+                    _mapController.camera.center,
+                    _mapController.camera.zoom - 1,
+                  ),
+                  heroTag: 'zoom_out',
+                ),
               ],
             ),
           ),
@@ -281,7 +325,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Colors.black.withValues(alpha: 0.1),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -297,13 +341,33 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '${_markers.length} locations',
+                    '${merchants.length} locations',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: colorScheme.onSurface,
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+
+          // Attribution
+          Positioned(
+            left: 16,
+            bottom: 60,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: colorScheme.surface.withValues(alpha: 0.9),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                '© OpenStreetMap contributors',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
               ),
             ),
           ),
@@ -341,7 +405,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -351,11 +415,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         decoration: InputDecoration(
           hintText: 'Search locations...',
           hintStyle: TextStyle(
-            color: colorScheme.onSurface.withOpacity(0.5),
+            color: colorScheme.onSurface.withValues(alpha: 0.5),
           ),
           prefixIcon: Icon(
             Icons.search,
-            color: colorScheme.onSurface.withOpacity(0.5),
+            color: colorScheme.onSurface.withValues(alpha: 0.5),
           ),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
@@ -443,7 +507,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -503,7 +567,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha: 0.15),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -518,7 +582,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: colorScheme.outline.withOpacity(0.3),
+              color: colorScheme.outline.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -538,7 +602,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         gradient: LinearGradient(
                           colors: [
                             categoryColor,
-                            categoryColor.withOpacity(0.7),
+                            categoryColor.withValues(alpha: 0.7),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(16),
@@ -570,7 +634,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: categoryColor.withOpacity(0.1),
+                                  color: categoryColor.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
@@ -583,7 +647,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                                 ),
                               ),
                               const SizedBox(width: 8),
-                              Icon(
+                              const Icon(
                                 Icons.star,
                                 size: 16,
                                 color: Colors.amber,
@@ -593,7 +657,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                                 merchant.averageReviewRating.toStringAsFixed(1),
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: colorScheme.onSurface.withOpacity(0.7),
+                                  color: colorScheme.onSurface.withValues(alpha: 0.7),
                                 ),
                               ),
                             ],
@@ -615,14 +679,14 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                     Icon(
                       Icons.location_on_outlined,
                       size: 18,
-                      color: colorScheme.onSurface.withOpacity(0.6),
+                      color: colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
                         '${merchant.address}, ${merchant.city}',
                         style: TextStyle(
-                          color: colorScheme.onSurface.withOpacity(0.7),
+                          color: colorScheme.onSurface.withValues(alpha: 0.7),
                           fontSize: 14,
                         ),
                       ),
@@ -636,10 +700,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.green.withOpacity(0.1),
+                      color: Colors.green.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(
-                        color: Colors.green.withOpacity(0.3),
+                        color: Colors.green.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Row(
@@ -724,7 +788,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   }
 
   void _openDirections(Merchant merchant) {
-    // In production, open Google Maps with directions
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Opening directions to ${merchant.name}...'),
@@ -742,11 +805,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> _setMapStyle(GoogleMapController controller) async {
-    // Optional: Apply custom map style for better appearance
-    // You can customize this based on your theme
-  }
-
   void _showMapTypeDialog() {
     showModalBottomSheet(
       context: context,
@@ -761,32 +819,32 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Map Type',
+                'Map Style',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 16),
-              _buildMapTypeOption(
+              _buildMapStyleOption(
                 icon: Icons.map_outlined,
-                label: 'Normal',
-                type: MapType.normal,
+                label: 'Standard',
+                styleKey: 'openstreetmap',
               ),
-              _buildMapTypeOption(
-                icon: Icons.satellite_alt,
-                label: 'Satellite',
-                type: MapType.satellite,
+              _buildMapStyleOption(
+                icon: Icons.light_mode,
+                label: 'Light',
+                styleKey: 'cartodb_light',
               ),
-              _buildMapTypeOption(
-                icon: Icons.terrain,
-                label: 'Terrain',
-                type: MapType.terrain,
+              _buildMapStyleOption(
+                icon: Icons.dark_mode,
+                label: 'Dark',
+                styleKey: 'cartodb_dark',
               ),
-              _buildMapTypeOption(
-                icon: Icons.layers,
-                label: 'Hybrid',
-                type: MapType.hybrid,
+              _buildMapStyleOption(
+                icon: Icons.volunteer_activism,
+                label: 'Humanitarian',
+                styleKey: 'humanitarian',
               ),
             ],
           ),
@@ -795,26 +853,32 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildMapTypeOption({
+  Widget _buildMapStyleOption({
     required IconData icon,
     required String label,
-    required MapType type,
+    required String styleKey,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isSelected = _currentTileLayer == styleKey;
     
     return ListTile(
-      leading: Icon(icon, color: colorScheme.primary),
-      title: Text(label),
-      onTap: () async {
+      leading: Icon(
+        icon, 
+        color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+      ),
+      title: Text(
+        label,
+        style: TextStyle(
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+        ),
+      ),
+      trailing: isSelected 
+          ? Icon(Icons.check_circle, color: colorScheme.primary)
+          : null,
+      onTap: () {
+        setState(() => _currentTileLayer = styleKey);
         Navigator.pop(context);
-        // Note: MapType can't be changed after creation in google_maps_flutter
-        // This would require rebuilding the map
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Switched to $label view'),
-            behavior: SnackBarBehavior.floating,
-          ),
-        );
       },
     );
   }
