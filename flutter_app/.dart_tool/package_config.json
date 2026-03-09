@@ -93,9 +93,9 @@
     },
     {
       "name": "flutter_lints",
-      "rootUri": "file:///C:/Users/vipin/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-6.0.0",
+      "rootUri": "file:///C:/Users/vipin/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-5.0.0",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "3.5"
     },
     {
       "name": "flutter_local_notifications",
@@ -249,9 +249,9 @@
     },
     {
       "name": "lints",
-      "rootUri": "file:///C:/Users/vipin/AppData/Local/Pub/Cache/hosted/pub.dev/lints-6.1.0",
+      "rootUri": "file:///C:/Users/vipin/AppData/Local/Pub/Cache/hosted/pub.dev/lints-5.1.1",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "3.6"
     },
     {
       "name": "matcher",
@@ -470,10 +470,10 @@
       "languageVersion": "3.8"
     },
     {
-      "name": "subinsights",
+      "name": "sub_insights",
       "rootUri": "../",
       "packageUri": "lib/",
-      "languageVersion": "3.10"
+      "languageVersion": "3.7"
     }
   ],
   "generator": "pub",

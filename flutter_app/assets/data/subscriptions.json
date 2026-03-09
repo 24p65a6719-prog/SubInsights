@@ -1,0 +1,193 @@
+{
+  "subscriptions": [
+    {
+      "id": "sub_hdfc_cc",
+      "name": "HDFC Regalia Credit Card",
+      "provider": "HDFC Bank",
+      "category": "banking",
+      "icon": "credit_card",
+      "color": "#004B87",
+      "description": "Premium credit card with travel, dining, and shopping rewards",
+      "associated_benefits": [
+        "ben_hdfc_hotel_cashback",
+        "ben_hdfc_cc_reward",
+        "ben_hdfc_dining_cashback",
+        "ben_hdfc_emi_offer",
+        "ben_hdfc_savings_bonus"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-12-31"
+    },
+    {
+      "id": "sub_sbi_cc",
+      "name": "SBI Elite Credit Card",
+      "provider": "State Bank of India",
+      "category": "banking",
+      "icon": "credit_card",
+      "color": "#1A4F8B",
+      "description": "Premium card with movie, dining, and travel benefits",
+      "associated_benefits": [
+        "ben_sbi_hotel_offer",
+        "ben_sbi_locker_discount",
+        "ben_sbi_fd_bonus",
+        "ben_sbi_grocery_cashback"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-06-30"
+    },
+    {
+      "id": "sub_icici_cc",
+      "name": "ICICI Amazon Pay Card",
+      "provider": "ICICI Bank",
+      "category": "banking",
+      "icon": "credit_card",
+      "color": "#F58220",
+      "description": "Amazon co-branded card with Amazon and partner rewards",
+      "associated_benefits": [
+        "ben_icici_amazon_offer",
+        "ben_icici_cc_reward",
+        "ben_icici_emi_offer"
+      ],
+      "is_active": true,
+      "expiry_date": "2028-03-31"
+    },
+    {
+      "id": "sub_axis_cc",
+      "name": "Axis Flipkart Credit Card",
+      "provider": "Axis Bank",
+      "category": "banking",
+      "icon": "credit_card",
+      "color": "#97144D",
+      "description": "Flipkart co-branded credit card with cashback on purchases",
+      "associated_benefits": [
+        "ben_axis_flipkart_offer",
+        "ben_axis_hotel_deals"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-09-30"
+    },
+    {
+      "id": "sub_zomato_gold",
+      "name": "Zomato Gold",
+      "provider": "Zomato",
+      "category": "restaurant",
+      "icon": "restaurant",
+      "color": "#E23744",
+      "description": "Premium dining membership with free deliveries and extra discounts",
+      "associated_benefits": [
+        "ben_zomato_gold_offer",
+        "ben_bbq_member_discount"
+      ],
+      "is_active": true,
+      "expiry_date": "2026-12-31"
+    },
+    {
+      "id": "sub_swiggy_one",
+      "name": "Swiggy One",
+      "provider": "Swiggy",
+      "category": "restaurant",
+      "icon": "delivery_dining",
+      "color": "#FC8019",
+      "description": "Free delivery and extra discounts on food orders and dining out",
+      "associated_benefits": [
+        "ben_swiggy_one_dining",
+        "ben_mainland_dine_offer"
+      ],
+      "is_active": true,
+      "expiry_date": "2026-11-30"
+    },
+    {
+      "id": "sub_amazon_prime",
+      "name": "Amazon Prime",
+      "provider": "Amazon India",
+      "category": "shop",
+      "icon": "shopping_cart",
+      "color": "#FF9900",
+      "description": "Free delivery, Prime Video, Prime Music, and exclusive deals",
+      "associated_benefits": [
+        "ben_reliance_member_discount",
+        "ben_icici_amazon_offer"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-01-15"
+    },
+    {
+      "id": "sub_flipkart_plus",
+      "name": "Flipkart Plus",
+      "provider": "Flipkart",
+      "category": "shop",
+      "icon": "shopping_bag",
+      "color": "#2874F0",
+      "description": "Free delivery, early access to sales, and coins rewards",
+      "associated_benefits": [
+        "ben_croma_exchange_bonus",
+        "ben_axis_flipkart_offer"
+      ],
+      "is_active": true,
+      "expiry_date": "2026-10-31"
+    },
+    {
+      "id": "sub_ieee",
+      "name": "IEEE Professional Membership",
+      "provider": "IEEE",
+      "category": "education",
+      "icon": "school",
+      "color": "#00629B",
+      "description": "Access to IEEE publications, conferences, and professional network",
+      "associated_benefits": [
+        "ben_ieee_student_offer",
+        "ben_ieee_conf_registration",
+        "ben_tech_conf_discount"
+      ],
+      "is_active": true,
+      "expiry_date": "2026-12-31"
+    },
+    {
+      "id": "sub_acm",
+      "name": "ACM Professional Membership",
+      "provider": "ACM",
+      "category": "education",
+      "icon": "computer",
+      "color": "#2A73CC",
+      "description": "Access to ACM digital library, conferences, and community",
+      "associated_benefits": [
+        "ben_acm_member_offer",
+        "ben_acm_conf_offer",
+        "ben_iitd_course_discount"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-06-30"
+    },
+    {
+      "id": "sub_ndl",
+      "name": "National Digital Library",
+      "provider": "NDL India",
+      "category": "education",
+      "icon": "local_library",
+      "color": "#0D47A1",
+      "description": "Free access to millions of academic resources and publications",
+      "associated_benefits": [
+        "ben_ndl_member_offer",
+        "ben_book_fair_student_discount"
+      ],
+      "is_active": true,
+      "expiry_date": "2027-03-31"
+    },
+    {
+      "id": "sub_bookmyshow",
+      "name": "BookMyShow Insider",
+      "provider": "BookMyShow",
+      "category": "conference",
+      "icon": "confirmation_number",
+      "color": "#C4242B",
+      "description": "Early access to events, conferences, and exclusive experiences",
+      "associated_benefits": [
+        "ben_biec_expo_discount",
+        "ben_hicc_event_discount",
+        "ben_startup_conf_offer"
+      ],
+      "is_active": true,
+      "expiry_date": "2026-12-31"
+    }
+  ]
+}
