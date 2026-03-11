@@ -115,8 +115,29 @@ class AppState extends ChangeNotifier {
   void _onNearbyUpdate(List<NearbyMerchant> nearby) {
     _nearbyMerchants = nearby;
     notifyListeners();
-    // Notifications are handled by LocationSimulator's dwell timer
-    // (see HomeScreenNew._onDwellTriggered) — not sent from here.
+
+    // Send notifications for merchants where the user has dwelled past threshold.
+    // hasDwelled is only true after LocationService._dwellThreshold has elapsed,
+    // so this is NOT instant — it respects the configured dwell time.
+    for (final nm in nearby) {
+      if (nm.hasDwelled && !_notifiedMerchantIds.contains(nm.merchant.id)) {
+        final benefits = _dataService.getBenefitsAtMerchant(nm.merchant);
+        final userBenefits = benefits
+            .where((b) => userSubscriptions
+                .any((s) => s.associatedBenefits.contains(b.id)))
+            .toList();
+
+        if (userBenefits.isNotEmpty) {
+          _notificationService.showDwellNotification(
+            id: nm.merchant.id.hashCode,
+            merchantName: nm.merchant.name,
+            offerCount: userBenefits.length,
+            dwellTime: '${nm.dwellDuration.inSeconds}s',
+          );
+          _notifiedMerchantIds.add(nm.merchant.id);
+        }
+      }
+    }
   }
 
   /// Subscribe to a subscription

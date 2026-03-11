@@ -7,6 +7,8 @@ import '../models/merchant.dart';
 class LocationService {
   Position? _currentPosition;
   StreamSubscription<Position>? _positionSubscription;
+  Timer? _dwellTimer;
+  List<Merchant> _monitoredMerchants = [];
   final _nearbyController = StreamController<List<NearbyMerchant>>.broadcast();
 
   // Dwell time tracking: merchant_id -> timestamp when user entered radius
@@ -73,24 +75,33 @@ class LocationService {
 
   /// Start monitoring location and tracking nearby merchants
   Future<void> startMonitoring(List<Merchant> merchants) async {
+    _monitoredMerchants = merchants;
     try {
       final hasPermission = await checkPermissions();
       if (!hasPermission) {
         // Use simulated position for testing
         debugPrint('Location permission not granted, using simulated position');
-        _updateNearbyMerchants(merchants);
-        return;
+      } else {
+        _positionSubscription = Geolocator.getPositionStream(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+            distanceFilter: 50,
+          ),
+        ).listen((position) {
+          _currentPosition = position;
+        });
       }
 
-      _positionSubscription = Geolocator.getPositionStream(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          distanceFilter: 50,
-        ),
-      ).listen((position) {
-        _currentPosition = position;
-        _updateNearbyMerchants(merchants);
+      // Tick the dwell tracker every second using the last-known position.
+      // This ensures dwell time accumulates even when the user is stationary
+      // (getPositionStream only fires after the user moves 50m).
+      _dwellTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (_currentPosition != null) {
+          _updateNearbyMerchants(_monitoredMerchants);
+        }
       });
+      // Emit an initial update immediately.
+      _updateNearbyMerchants(merchants);
     } catch (e) {
       debugPrint('Error starting monitoring: $e');
     }
@@ -174,6 +185,12 @@ class LocationService {
   }
 
   /// Haversine formula to calculate distance between two coordinates
+  /// Static version for use outside the class (e.g. background service).
+  static double haversineDistance(
+      double lat1, double lon1, double lat2, double lon2) {
+    return _haversineImpl(lat1, lon1, lat2, lon2);
+  }
+
   double _calculateDistance(
       double lat1, double lon1, double lat2, double lon2) {
     const double earthRadius = 6371000; // meters
@@ -188,7 +205,22 @@ class LocationService {
     return earthRadius * c;
   }
 
+  static double _haversineImpl(
+      double lat1, double lon1, double lat2, double lon2) {
+    const double earthRadius = 6371000;
+    final dLat = _degToRad(lat2 - lat1);
+    final dLon = _degToRad(lon2 - lon1);
+    final a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_degToRad(lat1)) *
+            cos(_degToRad(lat2)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
+    final c = 2 * atan2(sqrt(a), sqrt(1 - a));
+    return earthRadius * c;
+  }
+
   double _degreesToRadians(double degrees) => degrees * (pi / 180);
+  static double _degToRad(double degrees) => degrees * (pi / 180);
 
   /// Format distance for display
   static String formatDistance(double meters) {
@@ -201,6 +233,8 @@ class LocationService {
   void stopMonitoring() {
     _positionSubscription?.cancel();
     _positionSubscription = null;
+    _dwellTimer?.cancel();
+    _dwellTimer = null;
     _dwellStartTimes.clear();
   }
 

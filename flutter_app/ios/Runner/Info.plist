@@ -73,5 +73,12 @@
 	<string>SubInsights needs your location to notify you of nearby offers even when the app is in the background.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>SubInsights needs your location to notify you of nearby offers.</string>
+	<!-- Background modes for location tracking and push notifications -->
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>

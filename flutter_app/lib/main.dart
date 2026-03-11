@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'providers/app_state.dart';
@@ -15,16 +17,36 @@ import 'frontend/screens/login_screen_new.dart';
 import 'frontend/theme/app_colors.dart';
 import 'frontend/theme/app_theme_new.dart';
 import 'models/merchant.dart';
+import 'services/background_location_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // Firebase initialised for web only.
-  // Add google-services.json / GoogleService-Info.plist and remove the
-  // kIsWeb guard to enable Firebase on Android / iOS too.
-  if (kIsWeb) {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.web);
+
+  // Initialize Firebase on all platforms.
+  // Web uses the web config; Android/iOS use their respective configs
+  // from firebase_options.dart (populated by `flutterfire configure`).
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Register FCM background message handler (must be a top-level function).
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  // Configure the background location service (does not start it yet).
+  if (!kIsWeb) {
+    await initBackgroundLocationService();
   }
+
   runApp(const SubInsightsApp());
+}
+
+/// Top-level handler for FCM messages received when the app is killed.
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  debugPrint('FCM background message: ${message.messageId}');
 }
 
 class SubInsightsApp extends StatelessWidget {
@@ -85,10 +107,29 @@ class _AuthWrapperState extends State<AuthWrapper> {
 
   void _onLoginSuccess() {
     setState(() => _isLoggedIn = true);
+    // Start background location monitoring after successful login.
+    if (!kIsWeb) {
+      _requestPermissionsAndStartBackground();
+    }
+  }
+
+  Future<void> _requestPermissionsAndStartBackground() async {
+    // Request notification permission (Android 13+ / iOS).
+    final notifStatus = await Permission.notification.request();
+    debugPrint('Notification permission: $notifStatus');
+
+    // Request location-always permission for background tracking.
+    final locStatus = await Permission.locationAlways.request();
+    debugPrint('Location-always permission: $locStatus');
+
+    await startBackgroundService();
   }
 
   void _onLogout() {
     _authService.signOut();
+    if (!kIsWeb) {
+      stopBackgroundService();
+    }
     setState(() => _isLoggedIn = false);
   }
 
