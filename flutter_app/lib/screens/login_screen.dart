@@ -131,8 +131,8 @@ class _LoginScreenState extends State<LoginScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              colorScheme.primary.withOpacity(0.1),
-              colorScheme.secondary.withOpacity(0.05),
+              colorScheme.primary.withValues(alpha: 0.1),
+              colorScheme.secondary.withValues(alpha: 0.05),
               colorScheme.surface,
             ],
             stops: const [0, 0.5, 1],
@@ -196,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen>
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: colorScheme.primary.withOpacity(0.3),
+                color: colorScheme.primary.withValues(alpha: 0.3),
                 blurRadius: 20,
                 offset: const Offset(0, 10),
               ),
@@ -224,7 +224,7 @@ class _LoginScreenState extends State<LoginScreen>
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 16,
-            color: colorScheme.onSurface.withOpacity(0.6),
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],
@@ -240,10 +240,10 @@ class _LoginScreenState extends State<LoginScreen>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: colorScheme.error.withOpacity(0.1),
+                color: colorScheme.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: colorScheme.error.withOpacity(0.3),
+                  color: colorScheme.error.withValues(alpha: 0.3),
                 ),
               ),
               child: Row(
@@ -293,7 +293,7 @@ class _LoginScreenState extends State<LoginScreen>
                 _obscurePassword
                     ? Icons.visibility_outlined
                     : Icons.visibility_off_outlined,
-                color: colorScheme.onSurface.withOpacity(0.5),
+                color: colorScheme.onSurface.withValues(alpha: 0.5),
               ),
               onPressed: () =>
                   setState(() => _obscurePassword = !_obscurePassword),
@@ -326,7 +326,7 @@ class _LoginScreenState extends State<LoginScreen>
                   Text(
                     'Remember me',
                     style: TextStyle(
-                      color: colorScheme.onSurface.withOpacity(0.7),
+                      color: colorScheme.onSurface.withValues(alpha: 0.7),
                       fontSize: 14,
                     ),
                   ),
@@ -386,13 +386,13 @@ class _LoginScreenState extends State<LoginScreen>
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
-            color: colorScheme.outline.withOpacity(0.3),
+            color: colorScheme.outline.withValues(alpha: 0.3),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
-            color: colorScheme.outline.withOpacity(0.3),
+            color: colorScheme.outline.withValues(alpha: 0.3),
           ),
         ),
         focusedBorder: OutlineInputBorder(
@@ -455,7 +455,7 @@ class _LoginScreenState extends State<LoginScreen>
       children: [
         Expanded(
           child: Divider(
-            color: theme.colorScheme.outline.withOpacity(0.3),
+            color: theme.colorScheme.outline.withValues(alpha: 0.3),
           ),
         ),
         Padding(
@@ -463,14 +463,14 @@ class _LoginScreenState extends State<LoginScreen>
           child: Text(
             'or continue with',
             style: TextStyle(
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
               fontSize: 14,
             ),
           ),
         ),
         Expanded(
           child: Divider(
-            color: theme.colorScheme.outline.withOpacity(0.3),
+            color: theme.colorScheme.outline.withValues(alpha: 0.3),
           ),
         ),
       ],
@@ -478,63 +478,7 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   Widget _buildSocialLogin(ThemeData theme) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _buildGoogleButton(theme),
-        const SizedBox(width: 16),
-        _buildSocialButton(
-          icon: Icons.phone_android,
-          label: 'Phone',
-          color: const Color(0xFF25D366),
-          onTap: () => _showComingSoon('Phone login'),
-        ),
-        const SizedBox(width: 16),
-        _buildSocialButton(
-          icon: Icons.fingerprint,
-          label: 'Biometric',
-          color: theme.colorScheme.primary,
-          onTap: () => _showComingSoon('Biometric login'),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSocialButton({
-    required IconData icon,
-    required String label,
-    required Color color,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: Container(
-        width: 72,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: color.withOpacity(0.3),
-          ),
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                color: color,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return Center(child: _buildGoogleButton(theme));
   }
 
   Widget _buildGoogleButton(ThemeData theme) {
@@ -546,10 +490,10 @@ class _LoginScreenState extends State<LoginScreen>
         width: 72,
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: googleColor.withOpacity(0.1),
+          color: googleColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: googleColor.withOpacity(0.3),
+            color: googleColor.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
@@ -598,18 +542,6 @@ class _LoginScreenState extends State<LoginScreen>
     }
   }
 
-  void _showComingSoon(String feature) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$feature coming soon!'),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-      ),
-    );
-  }
-
   Widget _buildSignUpLink(ColorScheme colorScheme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -617,7 +549,7 @@ class _LoginScreenState extends State<LoginScreen>
         Text(
           "Don't have an account? ",
           style: TextStyle(
-            color: colorScheme.onSurface.withOpacity(0.6),
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
             fontSize: 15,
           ),
         ),

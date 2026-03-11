@@ -1,19 +1,29 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'firebase_options.dart';
 import 'providers/app_state.dart';
 import 'services/auth_service.dart';
-import 'screens/home_screen.dart';
-import 'screens/explore_screen.dart';
-import 'screens/nearby_screen.dart';
-import 'screens/subscriptions_screen.dart';
-import 'screens/map_screen.dart';
-import 'screens/merchant_detail_screen.dart';
-import 'screens/login_screen.dart';
-import 'utils/app_theme.dart';
+import 'frontend/screens/home_screen_new.dart';
+import 'frontend/screens/explore_screen_new.dart';
+import 'frontend/screens/nearby_screen_new.dart';
+import 'frontend/screens/subscriptions_screen_new.dart';
+import 'frontend/screens/map_screen_new.dart';
+import 'frontend/screens/merchant_detail_screen_new.dart';
+import 'frontend/screens/login_screen_new.dart';
+import 'frontend/theme/app_colors.dart';
+import 'frontend/theme/app_theme_new.dart';
 import 'models/merchant.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Firebase initialised for web only.
+  // Add google-services.json / GoogleService-Info.plist and remove the
+  // kIsWeb guard to enable Firebase on Android / iOS too.
+  if (kIsWeb) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.web);
+  }
   runApp(const SubInsightsApp());
 }
 
@@ -26,7 +36,7 @@ class SubInsightsApp extends StatelessWidget {
       create: (_) => AppState()..initialize(),
       child: MaterialApp(
         title: 'SubInsights',
-        theme: AppTheme.lightTheme,
+        theme: AppThemeNew.lightTheme,
         debugShowCheckedModeBanner: false,
         home: const AuthWrapper(),
         onGenerateRoute: (settings) {
@@ -34,7 +44,7 @@ class SubInsightsApp extends StatelessWidget {
             final merchant = settings.arguments as Merchant;
             return MaterialPageRoute(
               builder: (context) =>
-                  MerchantDetailScreen(merchant: merchant),
+                  MerchantDetailScreenNew(merchant: merchant),
             );
           }
           return null;
@@ -93,11 +103,11 @@ class _AuthWrapperState extends State<AuthWrapper> {
               Icon(
                 Icons.insights,
                 size: 64,
-                color: AppTheme.primaryColor,
+                color: AppColors.primary,
               ),
               SizedBox(height: 16),
               CircularProgressIndicator(
-                color: AppTheme.primaryColor,
+                color: AppColors.primary,
               ),
             ],
           ),
@@ -106,7 +116,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     }
 
     if (!_isLoggedIn) {
-      return LoginScreen(onLoginSuccess: _onLoginSuccess);
+      return LoginScreenNew(onLoginSuccess: _onLoginSuccess);
     }
 
     return MainShell(onLogout: _onLogout, authService: _authService);
@@ -136,11 +146,11 @@ class _MainShellState extends State<MainShell> {
   void initState() {
     super.initState();
     _screens = [
-      const HomeScreen(),
-      const ExploreScreen(),
-      const MapScreen(),
-      const NearbyScreen(),
-      const SubscriptionsScreen(),
+      const HomeScreenNew(),
+      const ExploreScreenNew(),
+      const MapScreenNew(),
+      const NearbyScreenNew(),
+      const SubscriptionsScreenNew(),
     ];
   }
 
@@ -166,13 +176,13 @@ class _MainShellState extends State<MainShell> {
           children: [
             CircleAvatar(
               radius: 40,
-              backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
               child: Text(
                 user?.initials ?? '?',
                 style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryColor,
+                  color: AppColors.primary,
                 ),
               ),
             ),
@@ -280,13 +290,13 @@ class _MainShellState extends State<MainShell> {
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
-                      color: AppTheme.primaryColor.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(
                       Icons.insights,
                       size: 64,
-                      color: AppTheme.primaryColor,
+                      color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -295,7 +305,7 @@ class _MainShellState extends State<MainShell> {
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.primaryColor,
+                      color: AppColors.primary,
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -311,7 +321,7 @@ class _MainShellState extends State<MainShell> {
                     width: 40,
                     height: 40,
                     child: CircularProgressIndicator(
-                      color: AppTheme.primaryColor,
+                      color: AppColors.primary,
                       strokeWidth: 3,
                     ),
                   ),
@@ -330,7 +340,7 @@ class _MainShellState extends State<MainShell> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     const Icon(Icons.error_outline,
-                        size: 64, color: AppTheme.errorColor),
+                        size: 64, color: AppColors.error),
                     const SizedBox(height: 16),
                     Text(
                       state.error!,
@@ -377,7 +387,7 @@ class _MainShellState extends State<MainShell> {
               IconButton(
                 icon: CircleAvatar(
                   radius: 14,
-                  backgroundColor: Colors.white.withOpacity(0.2),
+                  backgroundColor: Colors.white.withValues(alpha: 0.2),
                   child: Text(
                     widget.authService.currentUser?.initials ?? '?',
                     style: const TextStyle(

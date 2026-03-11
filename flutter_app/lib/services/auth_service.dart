@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:crypto/crypto.dart';
+import 'package:firebase_auth/firebase_auth.dart' as fb;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,13 +13,17 @@ class AuthService {
     aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
   );
-  
+
   static const _usersDbKey = 'users_database';
   static const _sessionKey = 'session_token';
   static const _rememberMeKey = 'remember_me';
   static const _otpStorageKey = 'otp_storage';
 
-  // Google Sign-In configuration
+  // Firebase Auth instance (handles token management & web OAuth popup).
+  final fb.FirebaseAuth _firebaseAuth = fb.FirebaseAuth.instance;
+
+  // google_sign_in is used only on Android / iOS.
+  // On web, Firebase Auth popup is used instead — no Client ID required.
   static final GoogleSignIn _googleSignIn = GoogleSignIn(
     scopes: ['email', 'profile'],
   );
@@ -407,31 +412,51 @@ class AuthService {
     ];
   }
 
-  // ==================== Google Sign-In ====================
+  // ==================== Google Sign-In (via Firebase Auth) ====================
 
-  /// Sign in with Google
+  /// Sign in with Google.
+  ///
+  /// On web:    uses Firebase Auth's signInWithPopup (OAuth popup flow).
+  /// On mobile: uses google_sign_in + Firebase credential exchange.
   Future<AuthResult> signInWithGoogle() async {
     try {
-      // Trigger Google Sign-In flow
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      
-      if (googleUser == null) {
-        return AuthResult.failure('Google sign-in was cancelled');
+      fb.UserCredential firebaseCred;
+
+      if (kIsWeb) {
+        // Web: Firebase Auth popup – no separate google_sign_in flow needed.
+        final provider = fb.GoogleAuthProvider()
+          ..addScope('email')
+          ..addScope('profile');
+        firebaseCred = await _firebaseAuth.signInWithPopup(provider);
+      } else {
+        // Mobile: trigger google_sign_in, exchange for Firebase credential.
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) {
+          return AuthResult.failure('Google sign-in was cancelled');
+        }
+        final googleAuth = await googleUser.authentication;
+        final credential = fb.GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        firebaseCred = await _firebaseAuth.signInWithCredential(credential);
       }
 
-      final email = googleUser.email.toLowerCase();
-      final name = googleUser.displayName ?? email.split('@').first;
-      final avatarUrl = googleUser.photoUrl;
+      final fbUser = firebaseCred.user;
+      if (fbUser == null) {
+        return AuthResult.failure('Google sign-in failed. Please try again.');
+      }
+
+      final email = (fbUser.email ?? '').toLowerCase();
+      final name = fbUser.displayName ?? email.split('@').first;
+      final avatarUrl = fbUser.photoURL;
 
       final usersDb = await _getUsersDb();
 
       if (usersDb.containsKey(email)) {
-        // Existing user - sign in
+        // Existing user – update last login & avatar.
         final userData = usersDb[email]!;
-        final user = UserModel.fromJson(
-            userData['user'] as Map<String, dynamic>);
-        
-        // Update with Google info if available
+        final user = UserModel.fromJson(userData['user'] as Map<String, dynamic>);
         final updatedUser = user.copyWith(
           lastLogin: DateTime.now(),
           avatarUrl: avatarUrl ?? user.avatarUrl,
@@ -439,19 +464,15 @@ class AuthService {
         userData['user'] = updatedUser.toJson();
         userData['is_google_user'] = true;
         await _saveUsersDb(usersDb);
-
         _currentUser = updatedUser;
         _sessionToken = _generateSessionToken(email);
         await _saveSession();
-
         return AuthResult.success(updatedUser);
       } else {
-        // New user - create account
-        final userId = 'user_${DateTime.now().millisecondsSinceEpoch}';
+        // New user – create local profile.
         final now = DateTime.now();
-
         final user = UserModel(
-          id: userId,
+          id: fbUser.uid,
           email: email,
           name: name,
           avatarUrl: avatarUrl,
@@ -460,18 +481,27 @@ class AuthService {
           lastLogin: now,
           preferences: UserPreferences(),
         );
-
         usersDb[email] = {
           'user': user.toJson(),
           'is_google_user': true,
         };
         await _saveUsersDb(usersDb);
-
         _currentUser = user;
         _sessionToken = _generateSessionToken(email);
         await _saveSession();
-
         return AuthResult.success(user);
+      }
+    } on fb.FirebaseAuthException catch (e) {
+      debugPrint('Firebase Google sign-in error: ${e.code} – ${e.message}');
+      switch (e.code) {
+        case 'popup-closed-by-user':
+          return AuthResult.failure('Sign-in popup was closed. Please try again.');
+        case 'popup-blocked':
+          return AuthResult.failure('Popup was blocked by the browser. Please allow popups.');
+        case 'account-exists-with-different-credential':
+          return AuthResult.failure('An account already exists with a different sign-in method.');
+        default:
+          return AuthResult.failure('Google sign-in failed: ${e.message}');
       }
     } catch (e) {
       debugPrint('Google sign-in error: $e');
@@ -479,10 +509,14 @@ class AuthService {
     }
   }
 
-  /// Sign out from Google
+  /// Sign out from Google.
   Future<void> signOutGoogle() async {
     try {
-      await _googleSignIn.signOut();
+      if (kIsWeb) {
+        await fb.FirebaseAuth.instance.signOut();
+      } else {
+        await _googleSignIn.signOut();
+      }
     } catch (e) {
       debugPrint('Google sign out error: $e');
     }

@@ -125,7 +125,7 @@ class _SignUpScreenState extends State<SignUpScreen>
             end: Alignment.bottomCenter,
             colors: [
               colorScheme.surface,
-              colorScheme.primary.withOpacity(0.05),
+              colorScheme.primary.withValues(alpha: 0.05),
             ],
           ),
         ),
@@ -192,7 +192,7 @@ class _SignUpScreenState extends State<SignUpScreen>
           'Start your subscription benefits journey',
           style: TextStyle(
             fontSize: 16,
-            color: colorScheme.onSurface.withOpacity(0.6),
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ],
@@ -208,9 +208,9 @@ class _SignUpScreenState extends State<SignUpScreen>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: colorScheme.error.withOpacity(0.1),
+                color: colorScheme.error.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: colorScheme.error.withOpacity(0.3)),
+                border: Border.all(color: colorScheme.error.withValues(alpha: 0.3)),
               ),
               child: Row(
                 children: [
@@ -354,11 +354,11 @@ class _SignUpScreenState extends State<SignUpScreen>
         fillColor: colorScheme.surface,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
+          borderSide: BorderSide(color: colorScheme.outline.withValues(alpha: 0.3)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
+          borderSide: BorderSide(color: colorScheme.outline.withValues(alpha: 0.3)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
@@ -417,7 +417,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: strengthValue,
-                  backgroundColor: colorScheme.outline.withOpacity(0.2),
+                  backgroundColor: colorScheme.outline.withValues(alpha: 0.2),
                   valueColor: AlwaysStoppedAnimation(strengthColor),
                   minHeight: 6,
                 ),
@@ -442,7 +442,7 @@ class _SignUpScreenState extends State<SignUpScreen>
             Text(
               'Use 8+ characters with letters & numbers',
               style: TextStyle(
-                color: colorScheme.onSurface.withOpacity(0.5),
+                color: colorScheme.onSurface.withValues(alpha: 0.5),
                 fontSize: 11,
               ),
             ),
@@ -474,7 +474,7 @@ class _SignUpScreenState extends State<SignUpScreen>
             child: RichText(
               text: TextSpan(
                 style: TextStyle(
-                  color: colorScheme.onSurface.withOpacity(0.7),
+                  color: colorScheme.onSurface.withValues(alpha: 0.7),
                   fontSize: 14,
                   height: 1.4,
                 ),
@@ -552,7 +552,7 @@ class _SignUpScreenState extends State<SignUpScreen>
         Text(
           'Already have an account? ',
           style: TextStyle(
-            color: colorScheme.onSurface.withOpacity(0.6),
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
             fontSize: 15,
           ),
         ),
