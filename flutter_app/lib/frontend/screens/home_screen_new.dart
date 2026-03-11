@@ -392,6 +392,9 @@ class _HomeScreenNewState extends State<HomeScreenNew> {
                                   _simulator.updateParams(
                                       threshold:
                                           Duration(seconds: v.round()));
+                                  // Keep LocationService dwell threshold in sync
+                                  context.read<AppState>().locationService
+                                      .setDwellThreshold(Duration(seconds: v.round()));
                                 },
                               ),
                             ],

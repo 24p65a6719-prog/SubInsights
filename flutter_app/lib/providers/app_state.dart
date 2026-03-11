@@ -115,27 +115,8 @@ class AppState extends ChangeNotifier {
   void _onNearbyUpdate(List<NearbyMerchant> nearby) {
     _nearbyMerchants = nearby;
     notifyListeners();
-
-    // Send notifications for merchants where user has dwelled
-    for (final nm in nearby) {
-      if (nm.hasDwelled && !_notifiedMerchantIds.contains(nm.merchant.id)) {
-        final benefits = _dataService.getBenefitsAtMerchant(nm.merchant);
-        final userBenefits = benefits
-            .where((b) => userSubscriptions
-                .any((s) => s.associatedBenefits.contains(b.id)))
-            .toList();
-
-        if (userBenefits.isNotEmpty) {
-          _notificationService.showDwellNotification(
-            id: nm.merchant.id.hashCode,
-            merchantName: nm.merchant.name,
-            offerCount: userBenefits.length,
-            dwellTime: '${nm.dwellDuration.inMinutes} min',
-          );
-          _notifiedMerchantIds.add(nm.merchant.id);
-        }
-      }
-    }
+    // Notifications are handled by LocationSimulator's dwell timer
+    // (see HomeScreenNew._onDwellTriggered) — not sent from here.
   }
 
   /// Subscribe to a subscription
@@ -188,20 +169,7 @@ class AppState extends ChangeNotifier {
       );
       _notifiedMerchantIds.clear();
       notifyListeners();
-
-      // Show nearby notification for demo
-      if (_nearbyMerchants.isNotEmpty) {
-        final nearest = _nearbyMerchants.first;
-        final benefits = _dataService.getBenefitsAtMerchant(nearest.merchant);
-        if (benefits.isNotEmpty) {
-          _notificationService.showNearbyOfferNotification(
-            id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
-            merchantName: nearest.merchant.name,
-            offerTitle: benefits.first.title,
-            distance: nearest.distanceLabel,
-          );
-        }
-      }
+      // Notification will be sent after dwell time threshold via LocationSimulator
     }
   }
 

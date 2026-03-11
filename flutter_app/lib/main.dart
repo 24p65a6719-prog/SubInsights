@@ -116,7 +116,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     }
 
     if (!_isLoggedIn) {
-      return LoginScreenNew(onLoginSuccess: _onLoginSuccess);
+      return LoginScreenNew(onLoginSuccess: _onLoginSuccess, authService: _authService);
     }
 
     return MainShell(onLogout: _onLogout, authService: _authService);

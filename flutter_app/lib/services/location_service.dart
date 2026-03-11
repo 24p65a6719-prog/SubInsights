@@ -12,7 +12,12 @@ class LocationService {
   // Dwell time tracking: merchant_id -> timestamp when user entered radius
   final Map<String, DateTime> _dwellStartTimes = {};
   static const double _notifyRadiusMeters = 500; // 500m radius
-  static const Duration _dwellThreshold = Duration(minutes: 2); // 2 min dwell
+  Duration _dwellThreshold = const Duration(minutes: 2); // configurable dwell
+
+  /// Update the dwell threshold (e.g. from the simulator's slider).
+  void setDwellThreshold(Duration threshold) {
+    _dwellThreshold = threshold;
+  }
 
   Position? get currentPosition => _currentPosition;
   Stream<List<NearbyMerchant>> get nearbyStream => _nearbyController.stream;

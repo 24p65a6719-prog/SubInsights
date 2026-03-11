@@ -8,7 +8,8 @@ import 'forgot_password_screen_new.dart';
 
 class LoginScreenNew extends StatefulWidget {
   final VoidCallback onLoginSuccess;
-  const LoginScreenNew({super.key, required this.onLoginSuccess});
+  final AuthService authService;
+  const LoginScreenNew({super.key, required this.onLoginSuccess, required this.authService});
 
   @override
   State<LoginScreenNew> createState() => _LoginScreenNewState();
@@ -19,7 +20,7 @@ class _LoginScreenNewState extends State<LoginScreenNew>
   final _formKey = GlobalKey<FormState>();
   final _emailCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
-  final _auth = AuthService();
+  late final AuthService _auth;
   bool _loading = false;
   bool _obscure = true;
   bool _remember = false;
@@ -30,6 +31,7 @@ class _LoginScreenNewState extends State<LoginScreenNew>
   @override
   void initState() {
     super.initState();
+    _auth = widget.authService;
     _animCtrl = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
@@ -311,7 +313,8 @@ class _LoginScreenNewState extends State<LoginScreenNew>
                             context,
                             MaterialPageRoute(
                               builder: (_) => SignupScreenNew(
-                                  onSignupSuccess: widget.onLoginSuccess),
+                                  onSignupSuccess: widget.onLoginSuccess,
+                                  authService: widget.authService),
                             ),
                           ),
                           child: const Text(

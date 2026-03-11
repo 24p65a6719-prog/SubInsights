@@ -6,7 +6,8 @@ import '../widgets/gradient_button.dart';
 
 class SignupScreenNew extends StatefulWidget {
   final VoidCallback onSignupSuccess;
-  const SignupScreenNew({super.key, required this.onSignupSuccess});
+  final AuthService authService;
+  const SignupScreenNew({super.key, required this.onSignupSuccess, required this.authService});
 
   @override
   State<SignupScreenNew> createState() => _SignupScreenNewState();
@@ -19,12 +20,18 @@ class _SignupScreenNewState extends State<SignupScreenNew> {
   final _phoneCtrl = TextEditingController();
   final _passCtrl = TextEditingController();
   final _confirmCtrl = TextEditingController();
-  final _auth = AuthService();
+  late final AuthService _auth;
   bool _loading = false;
   bool _obscure = true;
   bool _obscureConfirm = true;
   String? _error;
   PasswordStrength _strength = PasswordStrength.weak;
+
+  @override
+  void initState() {
+    super.initState();
+    _auth = widget.authService;
+  }
 
   @override
   void dispose() {
