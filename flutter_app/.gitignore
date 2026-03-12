@@ -43,3 +43,16 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android local machine config — never commit
+android/local.properties
+android/.gradle/
+
+# Firebase config files — contain API keys, manage separately per environment
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# Signing keystores — never commit private keys
+*.keystore
+*.jks
+android/key.properties

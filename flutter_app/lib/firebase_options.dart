@@ -33,14 +33,12 @@ class DefaultFirebaseOptions {
   );
 
   // ── Android ─────────────────────────────────────────────────────────────
-  // Download google-services.json from Firebase Console and run
-  // `flutterfire configure` to populate these automatically.
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey:            'YOUR_ANDROID_API_KEY',
-    appId:             'YOUR_ANDROID_APP_ID',
-    messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-    projectId:         'YOUR_PROJECT_ID',
-    storageBucket:     'YOUR_PROJECT_ID.appspot.com',
+    apiKey:            'AIzaSyA2Qq3LahluWOabgrFQjzyAeNnwaqOo6VQ',
+    appId:             '1:982871293951:android:78c8912a22175ee2c5f1ca',
+    messagingSenderId: '982871293951',
+    projectId:         'subinsights-df0dc',
+    storageBucket:     'subinsights-df0dc.firebasestorage.app',
   );
 
   // ── iOS ──────────────────────────────────────────────────────────────────

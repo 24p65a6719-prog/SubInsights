@@ -596,14 +596,14 @@ class AuthService {
         value: json.encode(otpData),
       );
 
-      // In production, send OTP via SMS/Email service
-      // For demo, we'll return the OTP (in real app, never do this!)
-      debugPrint('OTP for $emailLower: $otp'); // Remove in production!
+      // In production, send OTP via SMS/Email service.
+      // Never log or return the OTP outside of a dedicated delivery channel.
+      if (kDebugMode) {
+        debugPrint('DEBUG OTP for $emailLower: $otp');
+      }
 
       return OtpResult.success(
         message: 'OTP sent to ${maskEmail(emailLower)}',
-        // In demo mode, include OTP for testing (remove in production)
-        otp: kDebugMode ? otp : null,
       );
     } catch (e) {
       debugPrint('Send OTP error: $e');
