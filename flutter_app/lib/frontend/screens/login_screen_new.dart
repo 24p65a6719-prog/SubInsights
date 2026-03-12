@@ -324,7 +324,15 @@ class _LoginScreenNewState extends State<LoginScreenNew>
                             context,
                             MaterialPageRoute(
                               builder: (_) => SignupScreenNew(
-                                  onSignupSuccess: widget.onLoginSuccess,
+                                  onSignupSuccess: () {
+                                    Navigator.pop(context);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Account created! Please sign in.'),
+                                        backgroundColor: Colors.green,
+                                      ),
+                                    );
+                                  },
                                   authService: widget.authService),
                             ),
                           ),

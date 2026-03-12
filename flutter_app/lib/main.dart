@@ -14,6 +14,7 @@ import 'frontend/screens/subscriptions_screen_new.dart';
 import 'frontend/screens/map_screen_new.dart';
 import 'frontend/screens/merchant_detail_screen_new.dart';
 import 'frontend/screens/login_screen_new.dart';
+import 'frontend/screens/profile_screen_new.dart';
 import 'frontend/theme/app_colors.dart';
 import 'frontend/theme/app_theme_new.dart';
 import 'models/merchant.dart';
@@ -204,79 +205,12 @@ class _MainShellState extends State<MainShell> {
   ];
 
   void _showProfileMenu() {
-    final user = widget.authService.currentUser;
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(
-              radius: 40,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-              child: Text(
-                user?.initials ?? '?',
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              user?.name ?? 'User',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              user?.email ?? '',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey.shade600,
-              ),
-            ),
-            const SizedBox(height: 24),
-            ListTile(
-              leading: const Icon(Icons.person_outline),
-              title: const Text('Profile Settings'),
-              onTap: () {
-                Navigator.pop(context);
-                _showComingSoon('Profile Settings');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.notifications_outlined),
-              title: const Text('Notification Preferences'),
-              onTap: () {
-                Navigator.pop(context);
-                _showComingSoon('Notification Preferences');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.help_outline),
-              title: const Text('Help & Support'),
-              onTap: () {
-                Navigator.pop(context);
-                _showComingSoon('Help & Support');
-              },
-            ),
-            const Divider(),
-            ListTile(
-              leading: Icon(Icons.logout, color: Colors.red.shade400),
-              title: Text('Sign Out', style: TextStyle(color: Colors.red.shade400)),
-              onTap: () {
-                Navigator.pop(context);
-                _confirmLogout();
-              },
-            ),
-          ],
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ProfileScreenNew(
+          authService: widget.authService,
+          onLogout: widget.onLogout,
         ),
       ),
     );
