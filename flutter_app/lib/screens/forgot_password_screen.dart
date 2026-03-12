@@ -35,9 +35,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
   int _otpTimeRemaining = 300; // 5 minutes in seconds
   bool _canResendOtp = false;
 
-  // Debug mode OTP display
-  String? _debugOtp;
-
   @override
   void initState() {
     super.initState();
@@ -115,7 +112,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
       setState(() {
         _email = _emailController.text.trim();
         _successMessage = result.message;
-        _debugOtp = result.otp; // For demo/debug mode
         _currentStep = 1;
       });
       _startOtpTimer();
@@ -254,7 +250,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen>
     if (result.isSuccess) {
       setState(() {
         _successMessage = 'New OTP sent successfully';
-        _debugOtp = result.otp;
       });
       _startOtpTimer();
       // Clear OTP fields

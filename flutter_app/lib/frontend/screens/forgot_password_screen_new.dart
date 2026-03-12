@@ -21,7 +21,6 @@ class _ForgotPasswordScreenNewState extends State<ForgotPasswordScreenNew> {
   bool _loading = false;
   String? _error;
   String? _success;
-  String? _debugOtp;
 
   @override
   void dispose() {
@@ -44,7 +43,6 @@ class _ForgotPasswordScreenNewState extends State<ForgotPasswordScreenNew> {
     if (!mounted) return;
     setState(() => _loading = false);
     if (result.isSuccess) {
-      _debugOtp = result.otp;
       setState(() {
         _step = 1;
         _success = result.message;
@@ -207,11 +205,6 @@ class _ForgotPasswordScreenNewState extends State<ForgotPasswordScreenNew> {
                               style: TextStyle(
                                   fontSize: 18, fontWeight: FontWeight.w600)),
                           const SizedBox(height: 8),
-                          if (_debugOtp != null)
-                            Text('Demo OTP: $_debugOtp',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.primary)),
                           const SizedBox(height: 12),
                           TextFormField(
                             controller: _otpCtrl,
@@ -235,7 +228,6 @@ class _ForgotPasswordScreenNewState extends State<ForgotPasswordScreenNew> {
                                   _emailCtrl.text.trim());
                               if (mounted) {
                                 setState(() {
-                                  _debugOtp = r.otp;
                                   _success = r.isSuccess ? r.message : null;
                                   _error = r.isSuccess ? null : r.error;
                                 });

@@ -754,12 +754,11 @@ class OtpResult {
   final bool isSuccess;
   final String? message;
   final String? error;
-  final String? otp; // Only for debug mode
 
-  OtpResult._({required this.isSuccess, this.message, this.error, this.otp});
+  OtpResult._({required this.isSuccess, this.message, this.error});
 
-  factory OtpResult.success({required String message, String? otp}) =>
-      OtpResult._(isSuccess: true, message: message, otp: otp);
+  factory OtpResult.success({required String message}) =>
+      OtpResult._(isSuccess: true, message: message);
   
   factory OtpResult.failure(String error) =>
       OtpResult._(isSuccess: false, error: error);
