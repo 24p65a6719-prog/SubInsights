@@ -1,0 +1,6 @@
+{
+  "dwellThresholdSeconds": 120,
+  "dwellRadiusMeters": 500,
+  "locationSimulationEnabled": false,
+  "dwellControlVisible": false
+}

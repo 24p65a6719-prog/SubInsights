@@ -13,12 +13,17 @@ class LocationService {
 
   // Dwell time tracking: merchant_id -> timestamp when user entered radius
   final Map<String, DateTime> _dwellStartTimes = {};
-  static const double _notifyRadiusMeters = 500; // 500m radius
+  double _notifyRadiusMeters = 500; // configurable radius
   Duration _dwellThreshold = const Duration(minutes: 2); // configurable dwell
 
   /// Update the dwell threshold (e.g. from the simulator's slider).
   void setDwellThreshold(Duration threshold) {
     _dwellThreshold = threshold;
+  }
+
+  /// Update the dwell radius pushed by admin settings.
+  void setNotifyRadius(double radiusMeters) {
+    _notifyRadiusMeters = radiusMeters.clamp(100, 5000);
   }
 
   Position? get currentPosition => _currentPosition;

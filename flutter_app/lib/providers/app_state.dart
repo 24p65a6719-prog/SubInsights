@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../backend/services/admin_settings_service.dart';
+import '../models/admin_settings.dart';
 import '../models/merchant.dart';
 import '../models/benefit.dart';
 import '../models/subscription.dart';
@@ -14,6 +16,7 @@ class AppState extends ChangeNotifier {
   final LocationService _locationService = LocationService();
   final NotificationService _notificationService = NotificationService();
   final OfferValidationService _validationService = OfferValidationService();
+  final AdminSettingsService _adminSettingsService = AdminSettingsService();
 
   bool _isLoading = true;
   String? _error;
@@ -24,6 +27,7 @@ class AppState extends ChangeNotifier {
   String _selectedCategory = 'All';
   final Set<String> _notifiedMerchantIds = {};
   bool _locationSimulated = false;
+  AdminSettings _adminSettings = AdminSettings.defaults();
 
   // Getters
   bool get isLoading => _isLoading;
@@ -32,6 +36,7 @@ class AppState extends ChangeNotifier {
   LocationService get locationService => _locationService;
   NotificationService get notificationService => _notificationService;
   OfferValidationService get validationService => _validationService;
+  AdminSettings get adminSettings => _adminSettings;
   List<NearbyMerchant> get nearbyMerchants => _nearbyMerchants;
   String get selectedCity => _selectedCity;
   String get selectedCategory => _selectedCategory;
@@ -82,6 +87,7 @@ class AppState extends ChangeNotifier {
 
       await _dataService.loadAll();
       await _notificationService.initialize();
+      await _loadAdminSettings();
       await _loadUserSubscriptions();
 
       // Try to get real location, fallback to simulation
@@ -171,26 +177,16 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Simulate location at a specific city for testing
-  void simulateLocationAtCity(String city) {
-    final cityMerchants = _dataService.getMerchantsByCategory('').isEmpty
-        ? _dataService.merchants.where((m) => m.city == city).toList()
-        : _dataService.merchants.where((m) => m.city == city).toList();
-
-    if (cityMerchants.isNotEmpty) {
-      final m = cityMerchants.first;
-      _locationService.simulatePosition(m.latitude, m.longitude);
-      _locationSimulated = true;
-
-      _nearbyMerchants = _locationService.findNearbyMerchants(
-        _dataService.merchants,
-        lat: m.latitude,
-        lng: m.longitude,
-        radiusMeters: 50000,
-      );
-      _notifiedMerchantIds.clear();
-      notifyListeners();
-      // Notification will be sent after dwell time threshold via LocationSimulator
+  Future<void> _loadAdminSettings() async {
+    try {
+      _adminSettings = await _adminSettingsService.loadSettings();
+      _locationService.setDwellThreshold(_adminSettings.dwellThreshold);
+      _locationService.setNotifyRadius(_adminSettings.dwellRadiusMeters);
+    } catch (e) {
+      _adminSettings = AdminSettings.defaults();
+      _locationService.setDwellThreshold(_adminSettings.dwellThreshold);
+      _locationService.setNotifyRadius(_adminSettings.dwellRadiusMeters);
+      _error ??= 'Admin settings fallback: $e';
     }
   }
 

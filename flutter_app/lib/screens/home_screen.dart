@@ -71,67 +71,31 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
         children: [
-          Row(
-            children: [
-              const Icon(Icons.location_on, color: Colors.white, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                state.locationSimulated
-                    ? 'Simulated Location'
-                    : 'Live Location',
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 12,
-                ),
-              ),
-              const Spacer(),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  '${state.nearbyMerchants.length} nearby',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
+          const Icon(Icons.location_on, color: Colors.white, size: 20),
+          const SizedBox(width: 8),
           const Text(
-            'Simulate your location:',
-            style: TextStyle(color: Colors.white70, fontSize: 12),
+            'Location Active',
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 12,
+            ),
           ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 36,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: state.cities
-                  .where((c) => c != 'All')
-                  .map((city) => Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: ActionChip(
-                          label: Text(city,
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.white)),
-                          backgroundColor:
-                              Colors.white.withValues(alpha: 0.2),
-                          side: BorderSide.none,
-                          onPressed: () =>
-                              state.simulateLocationAtCity(city),
-                        ),
-                      ))
-                  .toList(),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              '${state.nearbyMerchants.length} nearby',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ],
@@ -506,3 +470,5 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+
+

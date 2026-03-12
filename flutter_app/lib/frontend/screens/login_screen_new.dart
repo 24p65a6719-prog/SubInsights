@@ -38,6 +38,17 @@ class _LoginScreenNewState extends State<LoginScreenNew>
     );
     _fadeIn = CurvedAnimation(parent: _animCtrl, curve: Curves.easeOut);
     _animCtrl.forward();
+    _loadSavedCredentials();
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    final savedEmail = await _auth.getSavedEmail();
+    if (savedEmail != null && mounted) {
+      setState(() {
+        _emailCtrl.text = savedEmail;
+        _remember = true;
+      });
+    }
   }
 
   @override

@@ -17,6 +17,7 @@ class AuthService {
   static const _usersDbKey = 'users_database';
   static const _sessionKey = 'session_token';
   static const _rememberMeKey = 'remember_me';
+  static const _savedEmailKey = 'saved_email';
   static const _otpStorageKey = 'otp_storage';
 
   // Firebase Auth instance (handles token management & web OAuth popup).
@@ -152,9 +153,12 @@ class AuthService {
       };
       await _saveUsersDb(usersDb);
 
-      // Auto login
+      // Auto login — always keep new users logged in across restarts.
       _currentUser = user;
       _sessionToken = _generateSessionToken(emailLower);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(_rememberMeKey, true);
+      await prefs.setString(_savedEmailKey, emailLower);
       await _saveSession();
 
       return AuthResult.success(user);
@@ -204,10 +208,15 @@ class AuthService {
 
       _currentUser = updatedUser;
       _sessionToken = _generateSessionToken(emailLower);
-      
-      // Save session
+
+      // Save session and optionally remember the email.
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_rememberMeKey, rememberMe);
+      if (rememberMe) {
+        await prefs.setString(_savedEmailKey, emailLower);
+      } else {
+        await prefs.remove(_savedEmailKey);
+      }
       await _saveSession();
 
       return AuthResult.success(updatedUser);
@@ -280,6 +289,15 @@ class AuthService {
     await _secureStorage.delete(key: _sessionKey);
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_rememberMeKey);
+    await prefs.remove(_savedEmailKey);
+  }
+
+  /// Returns the email that was last saved with remember-me, or null.
+  Future<String?> getSavedEmail() async {
+    final prefs = await SharedPreferences.getInstance();
+    final rememberMe = prefs.getBool(_rememberMeKey) ?? false;
+    if (!rememberMe) return null;
+    return prefs.getString(_savedEmailKey);
   }
 
   /// Update user subscriptions
@@ -466,6 +484,9 @@ class AuthService {
         await _saveUsersDb(usersDb);
         _currentUser = updatedUser;
         _sessionToken = _generateSessionToken(email);
+        final existingPrefs = await SharedPreferences.getInstance();
+        await existingPrefs.setBool(_rememberMeKey, true);
+        await existingPrefs.setString(_savedEmailKey, email);
         await _saveSession();
         return AuthResult.success(updatedUser);
       } else {
@@ -488,6 +509,9 @@ class AuthService {
         await _saveUsersDb(usersDb);
         _currentUser = user;
         _sessionToken = _generateSessionToken(email);
+        final newPrefs = await SharedPreferences.getInstance();
+        await newPrefs.setBool(_rememberMeKey, true);
+        await newPrefs.setString(_savedEmailKey, email);
         await _saveSession();
         return AuthResult.success(user);
       }

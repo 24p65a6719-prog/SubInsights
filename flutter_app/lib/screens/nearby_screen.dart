@@ -255,61 +255,25 @@ class NearbyScreen extends StatelessWidget {
   Widget _buildLocationBar(BuildContext context, AppState state) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.all(12),
-      child: Column(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      child: Row(
         children: [
-          Row(
-            children: [
-              Icon(
-                state.locationSimulated
-                    ? Icons.gps_off
-                    : Icons.gps_fixed,
-                color: state.locationSimulated
-                    ? Colors.orange
-                    : AppTheme.successColor,
-                size: 18,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                state.locationSimulated
-                    ? 'Simulated Location'
-                    : 'Live Location Active',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: state.locationSimulated
-                      ? Colors.orange
-                      : AppTheme.successColor,
-                ),
-              ),
-              const Spacer(),
-              Text(
-                '${state.nearbyMerchants.length} places nearby',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-            ],
+          const Icon(Icons.gps_fixed, color: AppTheme.successColor, size: 18),
+          const SizedBox(width: 8),
+          const Text(
+            'Location Active',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.successColor,
+            ),
           ),
-          const SizedBox(height: 8),
-          SizedBox(
-            height: 32,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: state.cities
-                  .where((c) => c != 'All')
-                  .map((city) => Padding(
-                        padding: const EdgeInsets.only(right: 6),
-                        child: ActionChip(
-                          label: Text(city,
-                              style: const TextStyle(fontSize: 11)),
-                          onPressed: () =>
-                              state.simulateLocationAtCity(city),
-                          avatar: const Icon(Icons.location_on, size: 14),
-                        ),
-                      ))
-                  .toList(),
+          const Spacer(),
+          Text(
+            '${state.nearbyMerchants.length} places nearby',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade600,
             ),
           ),
         ],
@@ -336,30 +300,12 @@ class NearbyScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Simulate a location to see nearby offers',
+              'Keep the app open with GPS enabled to see offers near you.',
               style: TextStyle(
                 fontSize: 14,
                 color: Colors.grey.shade600,
               ),
-            ),
-            const SizedBox(height: 24),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              alignment: WrapAlignment.center,
-              children: state.cities
-                  .where((c) => c != 'All')
-                  .map((city) => ElevatedButton.icon(
-                        onPressed: () =>
-                            state.simulateLocationAtCity(city),
-                        icon: const Icon(Icons.location_on, size: 16),
-                        label: Text(city),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.primaryColor,
-                          foregroundColor: Colors.white,
-                        ),
-                      ))
-                  .toList(),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -367,3 +313,5 @@ class NearbyScreen extends StatelessWidget {
     );
   }
 }
+
+
